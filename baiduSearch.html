@@ -72,10 +72,11 @@
     var ul = document.getElementById('uu');
     var input = document.getElementById('text');
     var searchBtn = document.getElementById('searchBtn');
-    input.onkeyup = function () {
-      var e = event = window.event;
-      if(e.keyCode == 13 && input.value !==''){
-        window.location='https://www.baidu.com/s?wd='+encodeURI(input.value);
+    input.onkeyup = function (event) {
+      var e = event || window.event;
+      console.log(e);
+      if (e.keyCode == 13 && input.value !== '') {
+        window.location = 'https://www.baidu.com/s?wd=' + encodeURI(input.value);
       }
       if (input.value == '') {
         ul.style.display = 'none';
@@ -90,7 +91,7 @@
       if (input.value == '') {
         ul.style.display = 'none';
       } else {
-        window.location='https://www.baidu.com/s?wd='+encodeURI(input.value);
+        window.location = 'https://www.baidu.com/s?wd=' + encodeURI(input.value);
       }
     }
   </script>
