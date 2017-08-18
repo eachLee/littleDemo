@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>百度搜索框</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      text-decoration: none;
+      list-style: none;
+    }
+
+    #box {
+      width: 600px;
+      margin: 50px auto;
+    }
+
+    #text {
+      width: 400px;
+      height: 20px;
+      line-height: 20px;
+    }
+
+    #searchBtn {
+      width: 50px;
+      height: 24px;
+    }
+
+    ul {
+      position: relative;
+      display: none;
+      z-index: 10;
+      box-shadow: 0px 5px 10px #ccc;
+    }
+
+    a {
+      color: blue;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="box">
+    <input type="text" id="text">
+    <input type="button" value="搜索" id="searchBtn">
+    <ul id="uu"></ul>
+  </div>
+  <script>
+    function xx(data) {
+      console.log(data); //看看传回来的数据形式
+      ul.innerHTML = '';
+      var arr = data.s; //发现s属性是传回来的数据
+      var df = document.createDocumentFragment(); //创建文档碎片
+      if (!data || !arr) {
+        ul.style.display = 'none';
+      } else {
+        ul.style.display = 'block';
+        arr.forEach(function (keyCode) { //遍历元素, 及插入节点
+          var oLi = document.createElement('li');
+          var oA = document.createElement('a');
+          oA.setAttribute('href', 'https://www.baidu.com/s?wd=' + keyCode);
+          oA.innerText = keyCode;
+          oLi.appendChild(oA);
+          df.appendChild(oLi);
+        });
+        ul.appendChild(df);
+
+      }
+    }
+    var ul = document.getElementById('uu');
+    var input = document.getElementById('text');
+    var searchBtn = document.getElementById('searchBtn');
+    input.onkeyup = function () {
+      var e = event = window.event;
+      if(e.keyCode == 13 && input.value !==''){
+        window.location='https://www.baidu.com/s?wd='+encodeURI(input.value);
+      }
+      if (input.value == '') {
+        ul.style.display = 'none';
+      } else {
+        var oScript = document.createElement('script'); //通过script标签获取数据
+        oScript.src = 'https://sp0.baidu.com/5a1Fazu8AA54nxGko9WTAnF6hhy/su?wd=' + input.value + '&cb=xx';
+        document.body.appendChild(oScript);
+        oScript.remove(); //获取完数据将标签删除
+      }
+    }
+    searchBtn.onclick = function () {
+      if (input.value == '') {
+        ul.style.display = 'none';
+      } else {
+        window.location='https://www.baidu.com/s?wd='+encodeURI(input.value);
+      }
+    }
+  </script>
+
+
+
+</body>
+
+</html>
