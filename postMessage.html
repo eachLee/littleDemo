@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document1</title>
+</head>
+
+<body>
+    <button id="btn">点我跳转</button>
+    <script>
+        window.addEventListener('message', function (e) {
+            document.body.innerHTML = e.data;
+        }, false);
+
+        btn.onclick = function () {
+            var myWin = window.open('postMessage2.html');
+            setTimeout(function () {
+                var message = '给我返回html';
+                myWin.postMessage(message, '*');
+            }, 2000)
+
+        }
+    </script>
+</body>
+
+</html>
