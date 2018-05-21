@@ -5,7 +5,17 @@ toolsObj.prototype = {
 	getRandomNum: function(min, max) {
 		return Math.floor(Math.random() * (max - min + 1) + min);
 	},
-
+	// 获取指定长度的随机字符串，参数为num 为指定的长度 返回字符串
+	getrandomstr: function(num) {
+		var str = '';
+		for (var i = str.length; i < num; i = str.length) {
+			str += Math.random()
+				.toString(36)
+				.slice(2);
+		}
+		str = str.slice(0, num);
+		return str;
+	},
 	// 获取url里的参数值 并返回一个包含对应参数相应的object对象 url 为指定网址
 	getUrlParam: function(url) {
 		var urlArr = [],
