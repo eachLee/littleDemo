@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        .icon-menu {
+            display: inline-block;
+            width: 15px;
+            height: 2px;
+            padding: 3px 0;
+            margin: 2px 3px 0px 0px;
+            border-top: 2px solid;
+            border-bottom: 2px solid;
+            background-color: currentColor;
+            background-clip: content-box;
+        }
+    </style>
+</head>
+
+<body>
+    请选择文本文件:
+    <input type="file" id="file" />
+    <input type="button" value="显示文本文件" onclick="readerText();" />
+    <div class="icon-menu"></div>
+    <input type="button" id="download" value="下载文件">
+    <div style="padding:8px">
+        <textarea id="textArea" cols="100" rows="30"></textarea>
+    </div>
+    <script src="js/readerText.js"></script>
+</body>
+
+</html>
