@@ -27,7 +27,70 @@ toolsObj.prototype = {
 		}
 		return undefined;
 	},
-
+	// 提升层级的一个函数 添加广告之后把高于添加广告层级的降低为9999
+	upzindex: function() {
+		var allA = document.getElementsByTagName('a'),
+			allIfr = document.getElementsByTagName('iframe'),
+			allDiv = document.getElementsByTagName('div');
+		for (var i = 0; i < allA.length; i++) {
+			var eleA = allA[i];
+			if (eleA.style.zIndex && eleA.style.zIndex > 9999) {
+				eleA.style.zIndex = 9999;
+				var aBottom = window.getComputedStyle(eleA).bottom.slice(0, -2);
+				if (aBottom < 50) {
+					var botA = window.getComputedStyle(eleA).height;
+					eleA.style.bottom = '-' + botA;
+				}
+			}
+		}
+		for (var n = 0; n < allIfr.length; n++) {
+			var eleIfr = allIfr[n];
+			if (eleIfr.style.zIndex && eleIfr.style.zIndex > 9999) {
+				eleIfr.style.zIndex = 9999;
+				var ifrBottom = window
+					.getComputedStyle(eleIfr)
+					.bottom.slice(0, -2);
+				if (ifrBottom < 50) {
+					var botIfr = window.getComputedStyle(eleIfr).height;
+					eleIfr.style.bottom = '-' + botIfr;
+				}
+			}
+		}
+		for (var m = 0; m < allDiv.length; m++) {
+			var eleDiv = allDiv[m];
+			if (eleDiv.id && eleDiv.id.indexOf('_so_') > -1) {
+				continue;
+			}
+			if (eleDiv.style.zIndex && eleDiv.style.zIndex > 9999) {
+				eleDiv.style.zIndex = 9999;
+				var divBottom = window
+					.getComputedStyle(eleDiv)
+					.bottom.slice(0, -2);
+				if (divBottom < 50) {
+					var bot = window.getComputedStyle(eleDiv).height;
+					eleDiv.style.bottom = '-' + bot;
+				}
+			}
+		}
+	},
+	getCookies: function(cookies, name) {
+		// cookies 为string 必填项 cookie字符串
+		// name 要获取的cookie名
+		// 返回值为string
+		var cookiesArr = [];
+		if (cookies && name) {
+			cookiesArr = cookies.split('; ');
+			for (var i = 0; i < cookiesArr.length; i++) {
+				var ele = cookiesArr[i];
+				var index = ele.indexOf(name + '=');
+				if (index > -1) {
+					return ele.split('=')[1];
+				}
+			}
+		} else {
+			return '';
+		}
+	},
 	// 复制指定文本到剪切板上 参数为要复制的文本
 	copyText: function(text) {
 		var copyBox = document.createElement('input');
@@ -39,6 +102,13 @@ toolsObj.prototype = {
 		copyBox.remove();
 	},
 
+	// 判断设备是否支持触屏 返回boolean值
+	hasTouch: function() {
+		var touchObj = {};
+		touchObj.isSupportTouch = 'ontouchend' in document ? true : false;
+		touchObj.isEvent = touchObj.isSupportTouch ? 'touchstart' : 'click';
+		return touchObj.isSupportTouch;
+	},
 	// 深复制对象 返回复制的对象
 	deelClone: function(obj) {
 		if (!obj) return;
