@@ -1,12 +1,12 @@
-var toolsObj = function() {};
+var toolsObj = function () { };
 
 toolsObj.prototype = {
 	// 获取指定范围的随机数 返回整数 包含min和max值
-	getRandomNum: function(min, max) {
+	getRandomNum: function (min, max) {
 		return Math.floor(Math.random() * (max - min + 1) + min);
 	},
 	// 获取指定长度的随机字符串，参数为num 为指定的长度 返回字符串
-	getrandomstr: function(num) {
+	getrandomstr: function (num) {
 		var str = '';
 		for (var i = str.length; i < num; i = str.length) {
 			str += Math.random()
@@ -17,7 +17,7 @@ toolsObj.prototype = {
 		return str;
 	},
 	// 获取url里的参数值 并返回一个包含对应参数相应的object对象 url 为指定网址
-	getUrlParam: function(url) {
+	getUrlParam: function (url) {
 		var urlArr = [],
 			urlObj = {};
 		if (url.indexOf('?') > -1) {
@@ -38,7 +38,7 @@ toolsObj.prototype = {
 		return undefined;
 	},
 	// 提升层级的一个函数 添加广告之后把高于添加广告层级的降低为9999
-	upzindex: function() {
+	upzindex: function () {
 		var allA = document.getElementsByTagName('a'),
 			allIfr = document.getElementsByTagName('iframe'),
 			allDiv = document.getElementsByTagName('div');
@@ -83,7 +83,7 @@ toolsObj.prototype = {
 			}
 		}
 	},
-	getCookies: function(cookies, name) {
+	getCookies: function (cookies, name) {
 		// cookies 为string 必填项 cookie字符串
 		// name 要获取的cookie名
 		// 返回值为string
@@ -102,7 +102,7 @@ toolsObj.prototype = {
 		}
 	},
 	// 复制指定文本到剪切板上 参数为要复制的文本
-	copyText: function(text) {
+	copyText: function (text) {
 		var copyBox = document.createElement('input');
 		copyBox.value = text;
 		document.body.appendChild(copyBox);
@@ -111,16 +111,20 @@ toolsObj.prototype = {
 		copyBox.style.display = 'none';
 		copyBox.remove();
 	},
+	//模拟实现的一个sleep函数 es6以上支持 单位为ms
+	sleep: function (ms) {
+		return new Promise(resolve => setTimeout(resolve, ms))
 
+	},
 	// 判断设备是否支持触屏 返回boolean值
-	hasTouch: function() {
+	hasTouch: function () {
 		var touchObj = {};
 		touchObj.isSupportTouch = 'ontouchend' in document ? true : false;
 		touchObj.isEvent = touchObj.isSupportTouch ? 'touchstart' : 'click';
 		return touchObj.isSupportTouch;
 	},
 	// 深复制对象 返回复制的对象
-	deelClone: function(obj) {
+	deelClone: function (obj) {
 		if (!obj) return;
 		// 一个检测传入的对象是否是指定类型的函数 返回boolean
 		function isType(obj, type) {
