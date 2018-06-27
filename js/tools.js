@@ -196,6 +196,11 @@ toolsObj.prototype = {
 			return child;
 		}
 		return cloneObj(obj);
+	},
+
+	// 判断是否参数是否是NaN
+	isNaN: function (n) {
+		return n !== n;
 	}
 };
 var tools = new toolsObj();
