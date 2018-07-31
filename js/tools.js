@@ -33,6 +33,12 @@ toolsObj.prototype = {
 					}
 				}
 				return urlObj;
+			}else{
+				if (urlArr[1].indexOf('=') > -1) {
+					var ele2Arr = urlArr[1].split('=');
+					urlObj[ele2Arr[0]] = ele2Arr[1];
+				}
+				return urlObj;
 			}
 		}
 		return undefined;
