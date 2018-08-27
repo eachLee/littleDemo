@@ -33,7 +33,7 @@ toolsObj.prototype = {
 					}
 				}
 				return urlObj;
-			}else{
+			} else {
 				if (urlArr[1].indexOf('=') > -1) {
 					var ele2Arr = urlArr[1].split('=');
 					urlObj[ele2Arr[0]] = ele2Arr[1];
@@ -119,7 +119,7 @@ toolsObj.prototype = {
 	},
 	//模拟实现的一个sleep函数 es6以上支持 单位为ms
 	sleep: function (ms) {
-		return new Promise(resolve => setTimeout(resolve, ms))
+		return new Promise(resolve => setTimeout(resolve, ms));
 
 	},
 	// 判断设备是否支持触屏 返回boolean值
