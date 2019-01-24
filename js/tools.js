@@ -1,6 +1,6 @@
-var toolsObj = function () { };
+var ToolsObj = function () { };
 
-toolsObj.prototype = {
+ToolsObj.prototype = {
 	// 获取指定范围的随机数 返回整数 包含min和max值
 	getRandomNum: function (min, max) {
 		return Math.floor(Math.random() * (max - min + 1) + min);
@@ -209,4 +209,4 @@ toolsObj.prototype = {
 		return n !== n;
 	}
 };
-var tools = new toolsObj();
+var tools = new ToolsObj();
