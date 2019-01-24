@@ -178,10 +178,14 @@ ToolsObj.prototype = {
 				// 对时间对象做特殊处理
 				child = new Date(obj.getTime());
 			} else {
-				// 处理对象原型
-				proto = Object.getPrototypeOf(obj);
-				// 利用Object.create切断原型链
-				child = Object.create(proto);
+				if (obj === null) {
+					return obj;
+				} else {
+					// 处理对象原型
+					proto = Object.getPrototypeOf(obj);
+					// 利用Object.create切断原型链
+					child = Object.create(proto);
+				}
 			}
 
 			// 处理循环引用

@@ -24,17 +24,17 @@
 			var objType = Object.prototype.toString.call(obj).toLowerCase();
 			var flag = false;
 			switch (type) {
-				case 'array':
-					flag = objType === '[object array]';
-					break;
-				case 'date':
-					flag = objType === '[object date]';
-					break;
-				case 'regexp':
-					flag = objType === '[object regexp]';
-					break;
-				default:
-					flag = false;
+			case 'array':
+				flag = objType === '[object array]';
+				break;
+			case 'date':
+				flag = objType === '[object date]';
+				break;
+			case 'regexp':
+				flag = objType === '[object regexp]';
+				break;
+			default:
+				flag = false;
 			}
 			return flag;
 		}
