@@ -207,6 +207,39 @@ ToolsObj.prototype = {
 		}
 		return cloneObj(obj);
 	},
+	/**
+	* 克隆对象
+	* @param {Object} obj - 被判断的对象
+	* @param {Boolean} cloneAll - 是否深度克隆,缺省false
+	* @return {Object} - 返回新对象
+	*/
+	//Fan神的方法 稍微修改版 有个别需要单独处理 如Date对象...
+	deelClone2: function (obj, cloneAll) {
+		switch (true) {
+			case obj === null || obj === undefined:
+			case typeof obj === 'number':
+			case typeof obj === 'string':
+				return obj;
+			case typeof obj === 'function' || obj instanceof Function:
+				return cloneAll ? function () {
+					return obj.apply(this, arguments);
+				} : obj;
+			case obj instanceof RegExp:
+				var reg = new RegExp(obj.source, obj.flags);
+				reg.lastIndex = obj.lastIndex;
+				return reg;
+			case typeof obj === 'object' && !!obj:
+				var newObj = obj instanceof Array ? [] : {};
+				for (var i in obj) {
+					if (i && obj.hasOwnProperty(i)) {
+						newObj[i] = cloneAll ? cloneObject(obj[i]) : obj[i];
+					}
+				}
+				return newObj;
+		}
+
+		return obj;
+	},
 
 	// 判断是否参数是否是NaN
 	isNaN: function (n) {
