@@ -228,6 +228,9 @@ ToolsObj.prototype = {
 				var reg = new RegExp(obj.source, obj.flags);
 				reg.lastIndex = obj.lastIndex;
 				return reg;
+			case obj instanceof Date:
+				var date = new Date(obj.getTime());
+				return date;
 			case typeof obj === 'object' && !!obj:
 				var newObj = obj instanceof Array ? [] : {};
 				for (var i in obj) {
