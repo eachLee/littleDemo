@@ -31,33 +31,34 @@ function threesumFn() {
  * @return {number[]}
  */
 	var threeSum = function (nums) {
+		nums.sort(function (a, b) {
+			return a - b;
+		});
 		let arr = [];
-		for (let n = 0; n < nums.length; n++) {
-			const ele = nums[n];
-			for (let i = n + 1; i < nums.length; i++) {
-				const ele2 = nums[i];
-				for (let m = i + 1; m < nums.length; m++) {
-					const ele3 = nums[m];
-					const sums = ele + ele2 + ele3;
-					let canPush = true;
-					if (sums === 0) {
-						for (var s = 0; s < arr.length; s++) {
-							const ele4 = arr[s].sort();
-							const elearr = [ele, ele2, ele3].sort();
-							if (ele4 && (elearr[0] === ele4[0] && elearr[1] === ele4[1] && elearr[2] === ele4[2])) {
-								canPush = false;
-							}
-						}
-
-						if (canPush) {
-							arr.push([ele, ele2, ele3]);
-							canPush = true;
-						}
+		var len = nums.length;
+		for (let n = 0; n < len; n++) {
+			if (n && nums[n] === nums[n - 1]) continue;
+			const ele = -nums[n];
+			let [start, end] = [n + 1, len - 1];
+			while (start < end) {
+				let sums = nums[start] + nums[end];
+				if (sums < ele) {
+					start++
+				} else if (sums > ele) {
+					end--
+				} else {
+					arr.push([nums[n], nums[start], nums[end]]);
+					while (nums[start] === nums[start + 1]) {
+						start++
 					}
+					start++
+					while (nums[end] === nums[end - 1]) {
+						end--
+					}
+					end--
 				}
 			}
 		}
-		console.log(arr);
 		return arr;
 	};
 	var nums = [-1, 0, 1, 2, -1, -4, -2, 3];
