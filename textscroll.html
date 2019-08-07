@@ -14,13 +14,8 @@
             font: 12px/1 '微软雅黑';
             background: #fff;
         }
-
-        .wrap {
-            width: 140px;
-            padding: 10px;
-        }
-
         .info {
+            width: 140px;
             padding-top: 10px;
             overflow: hidden;
         }
@@ -40,22 +35,20 @@
 </head>
 
 <body>
-    <div class="wrap">
-        <div id="info" class="info">
-            <div class="inner">
-                <p class="txt">文字如果超出了自动向左滚动</p>
-            </div>
+    <div id="info" class="info">
+        <div class="inner">
+            <p class="txt">文字如果超出了自动向左滚动</p>
         </div>
     </div>
     <script>
         function scroll() {
             var info = document.getElementById('info');
-            var div = info.getElementsByTagName('div')[0];
-            var p = document.getElementsByTagName('p')[0];
+            var div = info.getElementsByClassName('inner')[0];
+            var p = document.getElementsByClassName('txt')[0];
             var p_w = p.offsetWidth;
             var div_w = info.offsetWidth;
             if (div_w > p_w) { return false; }
-            div.innerHTML += div.innerHTML;
+            p.innerText += ' ' + p.innerText;
 
             setInterval(function () {
                 if (p_w <= info.scrollLeft) {
