@@ -14,7 +14,7 @@ function readerText() {
 	reader.readAsText(file);
 }
 
-var funDownload = function(content, filename) {
+var funDownload = function (content, filename) {
 	// 创建隐藏的可下载链接
 	var eleLink = document.createElement('a');
 	eleLink.download = filename;
