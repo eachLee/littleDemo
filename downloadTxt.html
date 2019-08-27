@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Document</title>
+</head>
+<body>
+	<a href="javascript:download('/download.html')" download="新增文档.txt" target="_blank">下载</a>
+</body>
+<script>
+	function download(filename) {
+			// 创建隐藏的可下载链接
+			console.log(new FileReader());
+			var ifr = document.createElement('iframe');
+			ifr.src = filename;	
+			ifr.style.display = 'none';		
+			var eleLink = document.createElement('a');
+			eleLink.download = "下载文档.txt";
+			eleLink.style.display = 'none'
+			// 触发点击
+			document.body.appendChild(ifr);
+			document.body.appendChild(eleLink);
+			
+			ifr.onload=function(){
+				content = this.contentWindow.document.body.innerText;
+				var blob = new Blob([content]);
+				eleLink.href = URL.createObjectURL(blob);
+				eleLink.click();
+				document.body.removeChild(ifr);
+				document.body.removeChild(eleLink);
+			}
+			console.log(eleLink.innerText);
+		};
+</script>
+</html>
