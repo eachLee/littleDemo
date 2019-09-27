@@ -33,7 +33,9 @@ function randomFn(len, count) {
       'w',
       'x',
       'y',
-      'z',
+      'z'
+    ],
+    [
       'A',
       'B',
       'C',
@@ -60,8 +62,7 @@ function randomFn(len, count) {
       'X',
       'Y',
       'Z'
-    ],
-    ['%', '_', '&', '#', '*']
+    ][('%', '_', '&', '#', '*')]
   ]
   let averageLen = Math.ceil(len / arr.length)
   let randomArr = []

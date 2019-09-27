@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="main">
+      <button id="randomBtn" onclick="randomBtnFn(10,20)">生成随机数</button>
+      <ul id="randomList"></ul>
+    </div>
+  </body>
+  <script src="js/tools.js"></script>
+  <script>
+    var randomBtn = document.getElementById('randomBtn')
+    function randomBtnFn(len, count) {
+      var randomArr = tools.randomFn(len, count)
+      var randomList = document.getElementById('randomList')
+      randomList.innerHTML = ''
+      for (var i = 0; i < randomArr.length; i++) {
+        var item = document.createElement('li')
+        item.innerHTML = randomArr[i]
+        randomList.appendChild(item)
+      }
+
+      document.getElementById('main').append(randomList)
+    }
+  </script>
+</html>
