@@ -32,16 +32,14 @@ ToolsObj.prototype = {
             urlObj[eleArr[0]] = eleArr[1]
           }
         }
-        return urlObj
       } else {
         if (urlArr[1].indexOf('=') > -1) {
           var ele2Arr = urlArr[1].split('=')
           urlObj[ele2Arr[0]] = ele2Arr[1]
         }
-        return urlObj
       }
     }
-    return undefined
+    return urlObj
   },
   // 提升层级的一个函数 添加广告之后把高于添加广告层级的降低为9999
   upzindex: function() {
