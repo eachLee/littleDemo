@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Document</title>
+</head>
+
+<body>
+	<label for="file">
+		<img src="" alt="">
+	</label>
+	<input type="file" name="" id="file">
+	<!-- 渲染图片img -->
+	<label for="file">
+		<img src="" id="img" alt="">
+	</label>
+</body>
+<!-- 图片为blob编码格式 -->
+<script>
+	window.onload = function () {
+		// 获取input:file标签
+		let file = document.querySelector("input[type=file]");
+		// 注册改变事件
+		file.onchange = () => {
+			// 获取里面上传的内容 -> 返回的是一个伪数组
+			let fileData = file.files[0];
+			// window.URL 有兼容问题
+			// 兼容代码
+			const windowURL = window.URL || window.webkitURL;
+			// window.URL.createObjectURL 会根据传入的参数创建一个指向该参数对象的URL
+			let imgSrc = windowURL.createObjectURL(fileData);
+			// 设置imgsrc
+			document.querySelector("#img").setAttribute("src", imgSrc)
+		};
+	}
+</script>
+<!-- 图片为base64编码格式 -->
+<script>
+	let file = document.querySelector("input[type=file]");
+	file.onchange = () => {
+		//获取input file的files文件数组;
+		var fileData = file.files[0];
+		//创建用来读取此文件的对象
+		var reader = new FileReader();
+		//使用该对象读取file文件
+		reader.readAsDataURL(fileData);
+		//读取文件成功后执行的方法函数
+		reader.onload = function (e) {
+			//读取成功后返回的一个参数e，整个的一个进度事件
+			console.log(e);
+			//选择所要显示图片的img，要赋值给img的src就是e中target下result里面
+			//的base64编码格式的地址
+			document.querySelector("#img").setAttribute("src", e.target.result)
+		}
+	}
+</script>
+
+</html>
