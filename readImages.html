@@ -27,6 +27,7 @@
 		file.onchange = () => {
 			// 获取里面上传的内容 -> 返回的是一个伪数组
 			let fileData = file.files[0];
+
 			// window.URL 有兼容问题
 			// 兼容代码
 			const windowURL = window.URL || window.webkitURL;
