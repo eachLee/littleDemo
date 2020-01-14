@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Document</title>
+</head>
+
+<body>
+	<textarea id="contentBox"></textarea>
+
+	<button id="btn">点击插入内容</button>
+</body>
+<script>
+	//语音回调方法
+	function voicecallback(uniqueid, content) {
+		content = decodeURIComponent(content);
+		//获取光标所在位置
+		var oTxt1 = document.getElementById(uniqueid);
+		var cursurPosition = -1;
+		if (oTxt1.selectionStart) {//非IE浏览器
+			if (oTxt1.selectionStart != undefined) {
+				cursurPosition = oTxt1.selectionStart;
+			}
+		} else {//IE
+			if (document.selection != undefined) {
+				var range = document.selection.createRange();
+				range.moveStart("character", -oTxt1.value.length);
+				cursurPosition = range.text.length;
+			}
+		}
+		//合并内容
+		var uniqueidremork = "";
+		var remorklength = document.getElementById(uniqueid).value.length;
+		if (remorklength <= 0) {
+			uniqueidremork = document.getElementById(uniqueid).value + content;
+		} else {
+			if (cursurPosition == -1) {
+				uniqueidremork = document.getElementById(uniqueid).value + content;
+			} else {
+				uniqueidremork = document.getElementById(uniqueid).value;
+				uniqueidremork = uniqueidremork.substring(0, cursurPosition) + content + uniqueidremork.substring(cursurPosition, remorklength);
+
+
+			}
+		}
+		//限制长度
+		if (uniqueidremork.length > 500) {
+			uniqueidremork = uniqueidremork.substring(0, 500);
+		}
+		document.getElementById(uniqueid).value = uniqueidremork;
+	}
+	let i = 1;
+	btn = document.getElementById('contentBox');
+	btn.onclick = function () {
+		voicecallback('contentBox', '我是插入的内容')
+	} 
+</script>
+
+</html>
