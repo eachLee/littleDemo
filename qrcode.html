@@ -1,0 +1,40 @@
+﻿<!doctype html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="Generator" content="EditPlus®">
+    <meta name="Author" content="">
+    <meta name="Keywords" content="">
+    <meta name="Description" content="">
+    <script src="js/jquery.js"></script>
+    <script src="js/qrcode.min.js"></script>
+    <title>qrcode</title>
+</head>
+
+<body>
+    <div id="qrcode"></div>
+</body>
+</body>
+<script type="text/javascript">
+    var qrcode = new QRCode(document.getElementById("qrcode"), {
+        width: 256,
+        height: 256
+    });
+
+    function makeCode() {
+        var baseUrl = 'http://my2018.centaline.com.cn/aplus';
+        var url = location.href;
+        var params = '';
+        if (url.indexOf('?') !== -1) {
+            params = url.substring(url.indexOf('?'), url.length);
+        }
+        var qrcode_str = baseUrl + params;
+
+        qrcode.makeCode(qrcode_str);
+    }
+    makeCode();
+    $('#qrcode').removeAttr('title');
+</script>
+
+</html>
