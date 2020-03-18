@@ -1,12 +1,12 @@
-var ToolsObj = function() {}
+var ToolsObj = function () { }
 
 ToolsObj.prototype = {
   // 获取指定范围的随机数 返回整数 包含min和max值
-  getRandomNum: function(min, max) {
+  getRandomNum: function (min, max) {
     return Math.floor(Math.random() * (max - min + 1) + min)
   },
   // 获取指定长度的随机字符串，参数为num 为指定的长度 返回字符串
-  getrandomstr: function(num) {
+  getrandomstr: function (num) {
     var str = ''
     for (var i = str.length; i < num; i = str.length) {
       str += Math.random()
@@ -17,7 +17,7 @@ ToolsObj.prototype = {
     return str
   },
   // 获取url里的参数值 并返回一个包含对应参数相应的object对象 url 为指定网址
-  getUrlParam: function(url) {
+  getUrlParam: function (url) {
     var urlArr = [],
       urlObj = {}
     if (url.indexOf('?') > -1) {
@@ -42,7 +42,7 @@ ToolsObj.prototype = {
     return urlObj
   },
   // 提升层级的一个函数 添加广告之后把高于添加广告层级的降低为9999
-  upzindex: function() {
+  upzindex: function () {
     var allA = document.getElementsByTagName('a'),
       allIfr = document.getElementsByTagName('iframe'),
       allDiv = document.getElementsByTagName('div')
@@ -83,7 +83,7 @@ ToolsObj.prototype = {
       }
     }
   },
-  getCookies: function(cookies, name) {
+  getCookies: function (cookies, name) {
     // cookies 为string 必填项 cookie字符串
     // name 要获取的cookie名
     // 返回值为string
@@ -102,7 +102,7 @@ ToolsObj.prototype = {
     }
   },
   // 复制指定文本到剪切板上 参数为要复制的文本
-  copyText: function(text) {
+  copyText: function (text) {
     var copyBox = document.createElement('input')
     copyBox.value = text
     document.body.appendChild(copyBox)
@@ -112,18 +112,18 @@ ToolsObj.prototype = {
     copyBox.remove()
   },
   //模拟实现的一个sleep函数 es6以上支持 单位为ms
-  sleep: function(ms) {
+  sleep: function (ms) {
     return new Promise(resolve => setTimeout(resolve, ms))
   },
   // 判断设备是否支持触屏 返回boolean值
-  hasTouch: function() {
+  hasTouch: function () {
     var touchObj = {}
     touchObj.isSupportTouch = 'ontouchend' in document ? true : false
     touchObj.isEvent = touchObj.isSupportTouch ? 'touchstart' : 'click'
     return touchObj.isSupportTouch
   },
   // 深复制对象 返回复制的对象
-  deelClone: function(obj) {
+  deelClone: function (obj) {
     if (!obj) return
     // 一个检测传入的对象是否是指定类型的函数 返回boolean
     function isType(obj, type) {
@@ -207,7 +207,7 @@ ToolsObj.prototype = {
    * @return {Object} - 返回新对象
    */
   //Fan神的方法 稍微修改版 有个别需要单独处理 如Date对象...
-  deelClone2: function(obj, cloneAll) {
+  deelClone2: function (obj, cloneAll) {
     switch (true) {
       case obj === null || obj === undefined:
       case typeof obj === 'number':
@@ -215,9 +215,9 @@ ToolsObj.prototype = {
         return obj
       case typeof obj === 'function' || obj instanceof Function:
         return cloneAll
-          ? function() {
-              return obj.apply(this, arguments)
-            }
+          ? function () {
+            return obj.apply(this, arguments)
+          }
           : obj
       case obj instanceof RegExp:
         var reg = new RegExp(obj.source, obj.flags)
@@ -238,14 +238,43 @@ ToolsObj.prototype = {
 
     return obj
   },
+  //根据身份证获取出生年月、性别、年龄
+  getIdCardAnalysis(card, num) {
+    if (num == 1) {
+      //获取出生日期
+      let birth = card.substring(6, 10) + "-" + card.substring(10, 12) + "-" + card.substring(12, 14);
+      return birth;
+    }
+    if (num == 2) {
+      //获取性别
+      if (parseInt(card.substr(16, 1)) % 2 == 1) {
+        //男
+        return "男";
+      } else {
+        //女
+        return "女";
 
+      }
+    }
+    if (num == 3) {
+      //获取年龄
+      var myDate = new Date();
+      var month = myDate.getMonth() + 1;
+      var day = myDate.getDate();
+      var age = myDate.getFullYear() - card.substring(6, 10) - 1;
+      if (card.substring(10, 12) < month || card.substring(10, 12) == month && card.substring(12, 14) <= day) {
+        age++;
+      }
+      return age;
+    }
+  },
   // 判断是否参数是否是NaN
-  isNaN: function(n) {
+  isNaN: function (n) {
     return n !== n
   },
   // len为生成字符串的长度默认为8，count为生成随机字符串的数量默认为1
   // 返回一个包含随机字符串的数组
-  randomFn: function(len, count) {
+  randomFn: function (len, count) {
     len = len || 8
     count = count || 1
     var randomStr
@@ -312,7 +341,7 @@ ToolsObj.prototype = {
     let randomArr = []
     for (var n = 0; n < count; n++) {
       randomStrArr = []
-      arr = arr.sort(function() {
+      arr = arr.sort(function () {
         return Math.random() > 0.5
       })
       for (let i = 0; i < arr.length; i++) {
@@ -322,7 +351,7 @@ ToolsObj.prototype = {
         }
       }
       randomStr = randomStrArr
-        .sort(function() {
+        .sort(function () {
           return Math.random() > 0.5
         })
         .join('')
