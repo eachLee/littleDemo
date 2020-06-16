@@ -5,6 +5,12 @@ ToolsObj.prototype = {
   getRandomNum: function (min, max) {
     return Math.floor(Math.random() * (max - min + 1) + min)
   },
+  // 获取当前地址的参数key为参数名
+  getUrlParam: function (key) {
+    var reg = new RegExp('[?|&]' + key + '=([^&]+)')
+    var match = location.search.match(reg)
+    return match && match[1]
+  },
   // 获取指定长度的随机字符串，参数为num 为指定的长度 返回字符串
   getrandomstr: function (num) {
     var str = ''
@@ -100,6 +106,12 @@ ToolsObj.prototype = {
     } else {
       return ''
     }
+  },
+  getCookie: function (name) {
+    //name 值为cookie名
+    let arr = document.cookie.match(new RegExp("(^| )" + name + "=([^;]*)(;|$)"));
+    if (arr != null) return unescape(arr[2]);
+    return null;
   },
   // 复制指定文本到剪切板上 参数为要复制的文本
   copyText: function (text) {
@@ -267,6 +279,42 @@ ToolsObj.prototype = {
       }
       return age;
     }
+  },
+  //语音回调方法 获取光标位置
+  getCursortPosition: function (uniqueid, content) {
+    content = decodeURIComponent(content);
+    //获取光标所在位置
+    var oTxt1 = document.getElementById(uniqueid);
+    var cursurPosition = -1;
+    if (oTxt1.selectionStart) {//非IE浏览器
+      if (oTxt1.selectionStart != undefined) {
+        cursurPosition = oTxt1.selectionStart;
+      }
+    } else {//IE
+      if (document.selection != undefined) {
+        var range = document.selection.createRange();
+        range.moveStart("character", -oTxt1.value.length);
+        cursurPosition = range.text.length;
+      }
+    }
+    //合并内容
+    var uniqueidremork = "";
+    var remorklength = document.querySelector("#" + uniqueid).val().length;
+    if (remorklength <= 0) {
+      uniqueidremork = document.querySelector("#" + uniqueid).val() + content;
+    } else {
+      if (cursurPosition == -1) {
+        uniqueidremork = document.querySelector("#" + uniqueid).val() + content;
+      } else {
+        uniqueidremork = document.querySelector("#" + uniqueid).val();
+        uniqueidremork = uniqueidremork.substring(0, cursurPosition) + content + uniqueidremork.substring(cursurPosition, remorklength);
+      }
+    }
+    //限制长度
+    if (uniqueidremork.length > 500) {
+      uniqueidremork = uniqueidremork.substring(0, 500);
+    }
+    document.querySelector("#" + uniqueid).val(uniqueidremork);
   },
   // 判断是否参数是否是NaN
   isNaN: function (n) {
