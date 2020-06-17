@@ -11,6 +11,11 @@ ToolsObj.prototype = {
     var match = location.search.match(reg)
     return match && match[1]
   },
+  //结构多维数组为扁平化数组 返回结构后得数组
+  reArr: function (arr) {
+    let newArr = [].concat(...arr);
+    return newArr.some(Array.isArray) ? reArr(newArr) : newArr;
+  },
   // 获取指定长度的随机字符串，参数为num 为指定的长度 返回字符串
   getrandomstr: function (num) {
     var str = ''
