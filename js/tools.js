@@ -1,5 +1,4 @@
 var ToolsObj = function () { }
-
 ToolsObj.prototype = {
   // 获取指定范围的随机数 返回整数 包含min和max值
   getRandomNum: function (min, max) {
