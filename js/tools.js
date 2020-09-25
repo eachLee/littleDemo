@@ -324,6 +324,17 @@ ToolsObj.prototype = {
   isNaN: function (n) {
     return n !== n
   },
+  //根据xpath获取指定元素
+  evalXpath: function (STR_XPATH) {
+    var xresult = document.evaluate(STR_XPATH, document, null, XPathResult.ANY_TYPE, null);
+    var xnodes = [];
+    var xres;
+    while (xres = xresult.iterateNext()) {
+      xnodes.push(xres);
+    }
+
+    return xnodes;
+  },
   // len为生成字符串的长度默认为8，count为生成随机字符串的数量默认为1
   // 返回一个包含随机字符串的数组
   randomFn: function (len, count) {
