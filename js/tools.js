@@ -422,6 +422,32 @@ ToolsObj.prototype = {
       randomArr.push(randomStr)
     }
     return randomArr
+  },
+  //格式化日期 value为日期 link为链接符
+  formatterDate(value, link = '-') {
+    let date = new Date(value);
+    let dateStr = "";
+    let year = date.getFullYear(),
+      month = date.getMonth() + 1,
+      day = date.getDate();
+    if (year == 1970) {
+      dateStr = "";
+    } else {
+      dateStr = year + link + ('0' + month).slice(-2) + link + ('0' + day).slice(-2);
+    }
+    return dateStr;
+  },
+  getCurrentWeek() {
+    //获取当前周的日期
+    let weekDate = [];
+    for (let i = 0; i < 7; i++) {
+      if (i == (new Date().getDay() || 7) - 1) {
+        weekDate.push(ToolsObj.formatterDate(new Date()))
+      } else {
+        weekDate.push(ToolsObj.formatterDate(new Date(new Date().getTime() - (new Date().getDay() - 1 - i) * 1000 * 60 * 60 * 24)))
+      }
+    }
+    console.log(weekDate);
   }
 }
 var tools = new ToolsObj()
