@@ -27,7 +27,7 @@ ToolsObj.prototype = {
     return str
   },
   // 获取url里的参数值 并返回一个包含对应参数相应的object对象 url 为指定网址
-  getUrlParam: function (url) {
+  getUrlParam: function (url = location.href) {
     var urlArr = [],
       urlObj = {}
     if (url.indexOf('?') > -1) {
