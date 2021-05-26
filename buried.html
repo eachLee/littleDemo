@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport"
+		content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no,viewport-fit=cover" />
+	<title>获取埋点</title>
+	<script src="js/readInfo.js"></script>
+</head>
+
+<body>
+	<button id="jumpUrl">点击我跳转地址</button>
+</body>
+<script>
+	if (window.history && window.history.pushState) {
+		//监听浏览器前进后退事件
+		window.addEventListener('popstate', function (ev) {
+			console.log(2);
+			//do something...
+		});
+		window.addEventListener('hashchange', function (ev) {
+			console.log('hashchange');
+		})
+
+		var timestamp;
+		if (window.__STAYTIMESTEMP__) {
+			timestamp = window.__STAYTIMESTEMP__
+		} {
+			timestamp = window.__STAYTIMESTEMP__ = Date.now()
+		}
+		window.addEventListener('beforeunload', function () {
+			let stay = (Date.now() - timestamp) / 1000
+			console.log('当前页面停留时间: ' + stay + '秒');
+			console.log('beforeunload', location.href);
+		})
+	}
+	window.__MONITORPAGELOAD__()
+	jumpUrl.onclick = function (e) {
+		location.pathname = 'qrcode.html'
+	}
+</script>
+
+</html>
