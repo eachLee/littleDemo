@@ -1,5 +1,5 @@
 {
-	let sendData = {},
+	var sendData = {},
 		devicesInfo;
 
 	// 根据元素读取xPath
@@ -35,6 +35,7 @@
 			}
 		}
 	}
+	//获取属性列表
 	function getAttrList(element) {
 		var arr = [],
 			attrName,
@@ -200,7 +201,13 @@
 			} else if (screenWidth === 414 && screenHeight === 736) {
 				device.deviceName = "iphone 6/7/8 Plus";
 			} else if (screenWidth === 375 && screenHeight === 812) {
-				device.deviceName = "iphone X/S/Max";
+				device.deviceName = "iphone X/S/11 Pro/12 Mini";
+			} else if (screenWidth === 414 && screenHeight === 896) {
+				device.deviceName = "iphone Xr/11/11 Pro Max";
+			} else if (screenWidth === 390 && screenHeight === 844) {
+				device.deviceName = "iphone 12/12 Pro";
+			} else if (screenWidth === 428 && screenHeight === 926) {
+				device.deviceName = "iphone 12 Pro Max";
 			}
 		} else if (device.ipad) {
 			device.deviceName = "ipad";
@@ -302,6 +309,92 @@
 		//this.firstUserParam = "";
 		//this.secondUserParam = "";
 	}
-	window.__MONITORCLICKELEMENT__ = clickElement;
-	window.__MONITORPAGELOAD__ = pageLoad;
+	function sendBeacon(data) {
+		data = data || sendData;
+		if (window.navigator.sendBeacon) {
+			var formData = new FormData();
+			// Object.keys(data).forEach((key) => {
+			// 	let value = data[key];
+			// 	if (typeof value !== 'string') {
+			// 		// formData只能append string 或 Blob
+			// 		value = JSON.stringify(value);
+			// 	}
+			// 	formData.append(key, value);
+			// });
+			formData = `[${JSON.stringify(data)}]`
+			console.log(typeof formData);
+			var flag = navigator.sendBeacon('http://10.7.11.22:9090/api/monitor/v1.1/upload-log', formData)
+			console.log(flag);
+		} else if (!window.fetch) {
+			alert('fetch')
+			fetch('http://10.7.11.22:9090/api/monitor/v1.1/upload-log/app-list', {
+				method: 'POST',
+				body: JSON.stringify({
+					customerPVS: [data]
+				}),
+				headers: {
+					'Content-Type': 'application/json;charset=UTF-8'
+				}
+			})
+		} else {
+			// data = {
+			// 	data: {
+			// 		logInfo: `${JSON.stringify(data)}$$$`
+			// 	}
+			// }
+			alert('ajax')
+			var xhr = new XMLHttpRequest()
+			xhr.open('POST', 'http://10.7.11.22:9090/api/monitor/v1.1/upload-log/app-list', false)
+			xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8')
+			xhr.send(JSON.stringify({
+				customerPVS: [data]
+			}))
+			// xhr.open('POST', 'http://10.7.11.22:9090/api/monitor/v1.1/upload-log', false)
+			// xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded')
+			// xhr.send(`data:${JSON.stringify({
+			// 	logInfo: `${JSON.stringify(data)}$$$`
+			// })}`)
+		}
+	}
+	function sleep(ms) {
+		return new Promise(resolve => setTimeout(resolve, ms))
+	}
+	//设置公共时间戳 用于计算页面停留时间
+	function setTimestemp() {
+		var timeStamp = localStorage.getItem('monitorStytemTimestemp');
+		pageLoad();
+		if (timeStamp) {
+			// window.__MONITOR_STAY_TIMESTEMP__ = timeStamp;
+		} else {
+			timeStamp = Date.now();
+			localStorage.setItem('monitorStytemTimestemp', timeStamp)
+			// window.__MONITOR_STAY_TIMESTEMP__ = timeStamp;
+		}
+		if (window.history && window.history.pushState) {
+			//监听浏览器前进后退事件 vue里路由模式未history时可用
+			window.addEventListener('popstate', function (ev) {
+				console.log(2);
+				//do something...
+			});
+		}
+		//监听浏览器前进后退事件 vue里路由模式未hash时可用
+		window.addEventListener('hashchange', function (ev) {
+			console.log('hashchange');
+		})
+		// sendBeacon()
+
+		//监听浏览器前进后退事件 
+		window.addEventListener('beforeunload', async function () {
+			var stayTime = (Date.now() - timeStamp);
+			sendData.stayTime = stayTime;
+			console.log('当前页面停留时间: ' + stayTime / 1000 + '秒');
+			setCommonProperty()
+			sendBeacon()
+			localStorage.setItem('monitorStytemTimestemp', Date.now())
+			// await sleep(2000)
+		})
+	}
+	setTimestemp()
+	window.__MONITOR_CLICK_ELEMENT__ = clickElement;
+	window.__MONITOR_PAGE_LOAD__ = pageLoad;
 }
