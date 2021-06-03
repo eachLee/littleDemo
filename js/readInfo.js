@@ -61,7 +61,7 @@
 		sendData.loadTime = "0";
 		sendData.title = document.title;
 		devicesInfo = getDevice();
-		setCommonProperty()
+		setCommonProperty();
 		return sendData;
 	}
 	function clickElement(e) {
@@ -88,7 +88,7 @@
 		var innerText = "";
 		var sourceId = "";
 		var xpath = "";
-		var attributeName = ""
+		var attributeName = "";
 		if (e.target.tagName.toLowerCase() != "svg" && e.target.tagName.toLowerCase() != "use") {
 			xpath = readXPath(e.target);
 			className = (typeof e.target.className === 'object') ? e.target.className.baseVal : e.target.className;
@@ -109,17 +109,17 @@
 		// }
 		sendData.uploadType = 'ELE_BEHAVIOR';
 		sendData.behaviorType = 'click';
-		sendData.sourceId = sourceId
+		sendData.sourceId = sourceId;
 		sendData.className = (className);
 		sendData.placeholder = (placeholder);
 		sendData.inputValue = (inputValue);
 		sendData.tagName = tagName;
-		sendData.tagType = tagType
+		sendData.tagType = tagType;
 		sendData.innerText = innerText;
 		sendData.xpath = xpath;
 		sendData.attributeName = attributeName;
 		devicesInfo = getDevice();
-		setCommonProperty()
+		setCommonProperty();
 		return sendData;
 	}
 	function getDevice() {
@@ -221,7 +221,7 @@
 		if (ua.indexOf("Mobile") == -1) {
 			var agent = navigator.userAgent.toLowerCase();
 			var regStr_ie = /msie [\d.]+;/gi;
-			var regStr_ff = /firefox\/[\d.]+/gi
+			var regStr_ff = /firefox\/[\d.]+/gi;
 			var regStr_chrome = /chrome\/[\d.]+/gi;
 			var regStr_saf = /safari\/[\d.]+/gi;
 
@@ -273,7 +273,7 @@
 		return fmt;
 	};
 	function getUuid() {
-		var timeStamp = new Date().getTime()
+		var timeStamp = new Date().getTime();
 		return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
 			var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
 			return v.toString(16);
@@ -281,7 +281,7 @@
 	};
 	function getCustomerKey() {
 		var customerKey = getUuid();
-		var reg = /^[0-9a-z]{8}(-[0-9a-z]{4}){3}-[0-9a-z]{12}-\d{13}$/
+		var reg = /^[0-9a-z]{8}(-[0-9a-z]{4}){3}-[0-9a-z]{12}-\d{13}$/;
 		if (!localStorage.monitorCustomerKey) {
 			localStorage.monitorCustomerKey = customerKey;
 		} else if (!reg.test(localStorage.monitorCustomerKey)) {
@@ -292,7 +292,7 @@
 	// 设置日志对象类的通用属性
 	function setCommonProperty() {
 		sendData.happenTime = dateFormat(new Date(), 'yyyy-MM-dd hh:mm:ss'); // 日志发生时间
-		sendData.webMonitorId = '0b0910cc-1f61-4ea8-8f21-ddc71829fe73';     // 用于区分应用的唯一标识（一个项目对应一个）
+		sendData.webMonitorId = localStorage.getItem('monitorProjectId') || 'c84630e6-e878-4e6f-9812-bba9db5c2ab2';     // 用于区分应用的唯一标识（一个项目对应一个）SCRM
 		//this.uri = window.location.href.split('?')[0].replace('#', ''); // 页面的url
 		sendData.uri = window.location.pathname[0] == "/" ? window.location.pathname.slice(1) : window.location.pathname;
 		sendData.completeUrl = window.location.href; // 页面的完整url
@@ -309,92 +309,59 @@
 		//this.firstUserParam = "";
 		//this.secondUserParam = "";
 	}
-	function sendBeacon(data) {
+	//发送log
+	function sendLog(data) {
 		data = data || sendData;
+		data.userId = localStorage.getItem('monitorUserId') || "98ea098e-0548-c1ca-a0a7-08d814209efa";
+		data.deptId = localStorage.getItem('monitorDeptId') || '';
+		var formData = new FormData();
+		formData.append('data', `[${JSON.stringify(data)}]`);
 		if (window.navigator.sendBeacon) {
-			var formData = new FormData();
-			// Object.keys(data).forEach((key) => {
-			// 	let value = data[key];
-			// 	if (typeof value !== 'string') {
-			// 		// formData只能append string 或 Blob
-			// 		value = JSON.stringify(value);
-			// 	}
-			// 	formData.append(key, value);
-			// });
-			formData = `[${JSON.stringify(data)}]`
-			console.log(typeof formData);
-			var flag = navigator.sendBeacon('http://10.7.11.22:9090/api/monitor/v1.1/upload-log', formData)
-			console.log(flag);
-		} else if (!window.fetch) {
-			alert('fetch')
-			fetch('http://10.7.11.22:9090/api/monitor/v1.1/upload-log/app-list', {
+			var flag = navigator.sendBeacon('http://10.7.11.22:9090/api/monitor/v1.1/upload-log/h5', formData);
+		} else if (window.fetch) {
+			fetch('http://10.7.11.22:9090/api/monitor/v1.1/upload-log/h5', {
 				method: 'POST',
-				body: JSON.stringify({
-					customerPVS: [data]
-				}),
-				headers: {
-					'Content-Type': 'application/json;charset=UTF-8'
-				}
+				body: formData
 			})
 		} else {
-			// data = {
-			// 	data: {
-			// 		logInfo: `${JSON.stringify(data)}$$$`
-			// 	}
-			// }
-			alert('ajax')
-			var xhr = new XMLHttpRequest()
-			xhr.open('POST', 'http://10.7.11.22:9090/api/monitor/v1.1/upload-log/app-list', false)
-			xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8')
-			xhr.send(JSON.stringify({
-				customerPVS: [data]
-			}))
-			// xhr.open('POST', 'http://10.7.11.22:9090/api/monitor/v1.1/upload-log', false)
-			// xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded')
-			// xhr.send(`data:${JSON.stringify({
-			// 	logInfo: `${JSON.stringify(data)}$$$`
-			// })}`)
+			var xhr = new XMLHttpRequest();
+			xhr.open('POST', 'http://10.7.11.22:9090/api/monitor/v1.1/upload-log/h5', true);
+			xhr.send(formData)
 		}
-	}
-	function sleep(ms) {
-		return new Promise(resolve => setTimeout(resolve, ms))
 	}
 	//设置公共时间戳 用于计算页面停留时间
 	function setTimestemp() {
 		var timeStamp = localStorage.getItem('monitorStytemTimestemp');
 		pageLoad();
-		if (timeStamp) {
-			// window.__MONITOR_STAY_TIMESTEMP__ = timeStamp;
-		} else {
+		if (!timeStamp) {
 			timeStamp = Date.now();
-			localStorage.setItem('monitorStytemTimestemp', timeStamp)
-			// window.__MONITOR_STAY_TIMESTEMP__ = timeStamp;
+			localStorage.setItem('monitorStytemTimestemp', timeStamp);
 		}
-		if (window.history && window.history.pushState) {
-			//监听浏览器前进后退事件 vue里路由模式未history时可用
-			window.addEventListener('popstate', function (ev) {
-				console.log(2);
-				//do something...
-			});
-		}
-		//监听浏览器前进后退事件 vue里路由模式未hash时可用
-		window.addEventListener('hashchange', function (ev) {
-			console.log('hashchange');
-		})
-		// sendBeacon()
+		// if (window.history && window.history.pushState) {
+		// 	//监听浏览器前进后退事件 vue里路由模式未history时可用
+		// 	window.addEventListener('popstate', function (ev) {
+		// 		console.log(2);
+		// 		//do something...
+		// 	});
+		// }
+		// //监听浏览器前进后退事件 vue里路由模式未hash时可用
+		// window.addEventListener('hashchange', function (ev) {
+		// 	console.log('hashchange');
+		// })
 
 		//监听浏览器前进后退事件 
-		window.addEventListener('beforeunload', async function () {
+		window.addEventListener('beforeunload', async function (e) {
 			var stayTime = (Date.now() - timeStamp);
 			sendData.stayTime = stayTime;
+			console.log(e.currentTarget);//获取当前window对象
 			console.log('当前页面停留时间: ' + stayTime / 1000 + '秒');
-			setCommonProperty()
-			sendBeacon()
-			localStorage.setItem('monitorStytemTimestemp', Date.now())
-			// await sleep(2000)
+			setCommonProperty();
+			sendLog();
+			localStorage.setItem('monitorStytemTimestemp', Date.now());
 		})
 	}
-	setTimestemp()
+	setTimestemp();
 	window.__MONITOR_CLICK_ELEMENT__ = clickElement;
 	window.__MONITOR_PAGE_LOAD__ = pageLoad;
+	window.__MONITOR_SEND_LOG__ = sendLog;
 }

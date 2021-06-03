@@ -7,19 +7,43 @@
 	<meta name="viewport"
 		content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no,viewport-fit=cover" />
 	<title>获取埋点</title>
-	<script src="js/readInfo.js?1231"></script>
+	<script src="js/readInfo.js"></script>
+	<!-- <script src="https://imonitor.centaline.com.cn/static/js/monitor.readinfo.min.js?v=2021526"></script> -->
 </head>
 
 <body>
 	<button id="jumpUrl">点击我跳转地址</button>
 </body>
 <script>
+	var customData = {
+		obj: '123143',
+		send: '123124'
+	}
+	console.log(window.__MONITOR_PAGE_LOAD__);
 	window.__MONITOR_PAGE_LOAD__()
 	jumpUrl.onclick = function (e) {
 		location.pathname = 'qrcode.html'
 		let data = window.__MONITOR_CLICK_ELEMENT__(e)
-		console.log(data);
+		window.__MONITOR_SEND_LOG__(data)
 	}
+	function sendMonitorInfo(ev, customData) {
+		//此方法为点击事件埋点方法 需要事件对象
+		//ev为事件对象  不传的话默认取body, customData为需要传递的参数 会合并到埋点要发送的对象里	
+		ev = ev || document.body;
+		var data = window.__MONITOR_CLICK_ELEMENT__(ev)
+		data = Object.assign(data, customData)
+		window.__MONITOR_SEND_LOG__(data)
+	}
+	function sendMonitorLoadInfo(customData) {
+		// 此方法为页面加载事件方法
+		//customData为需要传递的参数 会合并到埋点要发送的对象里	
+		if (ev) {
+			var data = window.__MONITOR_PAGE_LOAD__()
+			data = Object.assign(data, customData)
+			window.__MONITOR_SEND_LOG__(data)
+		}
+	}
+
 </script>
 
 </html>
