@@ -1,9 +1,54 @@
-class centaLabSdk{
+let centaLabSdk;
+try {
+	centaLabSdk = class CentaLabSdk{
 	constructor(url,data){
-		this.baseUrl = url||'http://10.7.11.22:9090/api/monitor/v1.1/upload-log/h5';
+		this.baseUrl = url||'http://trace.centanet.com/api/star/createstar';
 		this.sendData = data||{};
 		this.devicesInfo;
 
+	}
+	
+    //获取localStorage
+    getLocalStorage(name,isObject){
+      if(name){
+        let data = localStorage.getItem(name);
+        if(isObject){
+          if(data){
+            return JSON.parse(data);
+          }
+        }else{
+          return data;
+        }
+      }else{
+        return '';
+      }
+    }
+    //设置localStorage
+    setLocalStorage(name,data){
+      if(name&&data){
+        if(typeof data === 'object'){
+          localStorage.setItem(name,JSON.stringify(data));
+        }else{
+          localStorage.setItem(name,data);
+        }
+      }
+    }
+	//初始化配置
+	init(config) {
+		if (this.getLocalStorage('monitorConfig',true)) {
+			this.setLocalStorage('monitorConfig', Object.assign(this.getLocalStorage('monitorConfig',true), config));
+		} else {
+			this.setLocalStorage('monitorConfig', config);
+		}
+
+		this.config = this.getLocalStorage('monitorConfig',true)||{};
+
+		if (!this.config.isDev) {
+			this.baseUrl = this.baseUrlObj.prod;
+		} else {
+			this.baseUrl = this.baseUrlObj.test;
+		}
+		this.config.isLog && console.log('monitorConfig is: ', this.getLocalStorage('monitorConfig',true));
 	}
 	// 根据元素读取xPath
 	readXPath(element) {
@@ -313,6 +358,77 @@ class centaLabSdk{
 		//this.firstUserParam = "";
 		//this.secondUserParam = "";
 	}
+	 //合并对象 
+	 isMergeableObject(val) {
+		var nonNullObject = val && typeof val === 'object'
+
+		return nonNullObject
+			&& Object.prototype.toString.call(val) !== '[object RegExp]'
+			&& Object.prototype.toString.call(val) !== '[object Date]'
+	}
+
+	emptyTarget(val) {
+		return Array.isArray(val) ? [] : {}
+	}
+
+	cloneIfNecessary(value, optionsArgument) {
+		var clone = optionsArgument && optionsArgument.clone === true
+		return (clone && this.isMergeableObject(value)) ? this.deepmerge(this.emptyTarget(value), value, optionsArgument) : value
+	}
+
+	defaultArrayMerge(target, source, optionsArgument) {
+		var destination = target.slice();
+		var _this = this;
+		source.forEach(function (e, i) {
+			if (typeof destination[i] === 'undefined') {
+				destination[i] = _this.cloneIfNecessary(e, optionsArgument)
+			} else if (_this.isMergeableObject(e)) {
+				destination[i] = _this.deepmerge(target[i], e, optionsArgument)
+			} else if (target.indexOf(e) === -1) {
+				destination.push(_this.cloneIfNecessary(e, optionsArgument))
+			}
+		})
+		return destination
+	}
+
+	mergeObject(target, source, optionsArgument) {
+		var destination = {};
+		var _this = this;
+		if (this.isMergeableObject(target)) {
+			Object.keys(target).forEach(function (key) {
+				destination[key] = _this.cloneIfNecessary(target[key], optionsArgument)
+			})
+		}
+		Object.keys(source).forEach(function (key) {
+			if (!_this.isMergeableObject(source[key]) || !target[key]) {
+				destination[key] = _this.cloneIfNecessary(source[key], optionsArgument)
+			} else {
+				destination[key] = _this.deepmerge(target[key], source[key], optionsArgument)
+			}
+		})
+		return destination
+	}
+
+	deepmerge(target, source, optionsArgument) {
+		var array = Array.isArray(source);
+		var options = optionsArgument || { arrayMerge: this.defaultArrayMerge }
+		var arrayMerge = options.arrayMerge || this.defaultArrayMerge
+
+		if (array) {
+			return Array.isArray(target) ? arrayMerge(target, source, optionsArgument) : this.cloneIfNecessary(source, optionsArgument)
+		} else {
+			return this.mergeObject(target, source, optionsArgument)
+		}
+	}
+	//存储centaId相关信息
+	customerInfo(centaIdObj) {
+		if (this.getLocalStorage('monitorCentaId',true)) {
+			this.setLocalStorage('monitorCentaId',Object.assign(this.getLocalStorage('monitorCentaId',true), centaIdObj));
+		} else {
+			this.setLocalStorage('monitorCentaId',centaIdObj);
+		}
+		this.config.isLog && console.log('monitorCentaId is: ', this.getLocalStorage('monitorCentaId',true));
+	}
 	//发送log
 	trigger(data) {
 		data = data || this.sendData;
@@ -320,12 +436,10 @@ class centaLabSdk{
 		data.deptId = localStorage.getItem('monitorDeptId') || '';
 		var formData = new FormData();
 		formData.append('data', `[${JSON.stringify(data)}]`);
-		if (window.navigator.sendBeacon) {
-			var flag = navigator.sendBeacon(this.baseUrl, formData);
-		} else if (window.fetch) {
+		if (window.fetch) {
 			fetch(this.baseUrl, {
 				method: 'POST',
-				body: formData
+				body: JSON.stringify(data)
 			})
 		} else {
 			var xhr = new XMLHttpRequest();
@@ -355,5 +469,9 @@ class centaLabSdk{
 	}
 }
 
-window.lab = new centaLabSdk();
-lab.setTimestemp();
+let lab = new centaLabSdk();
+lab.setTimestemp();	
+} catch (error) {
+	console.log(error);
+}
+window.centaLabSdk = centaLabSdk;

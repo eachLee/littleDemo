@@ -7,7 +7,7 @@
 	<meta name="viewport"
 		content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no,viewport-fit=cover" />
 	<title>获取埋点</title>
-	<script src="js/centalab-sdk.js"></script>
+	<script src="js/centalab-sdk-copy.js"></script>
 	<!-- <script src="js/readInfo.js"></script> -->
 	<!-- <script src="https://imonitor.centaline.com.cn/static/js/monitor.readinfo.min.js?v=2021526"></script> -->
 </head>
@@ -21,7 +21,8 @@
 		obj: '123143',
 		send: '123124'
 	}
-	console.log(window.lab);
+	let lab = new window.centaLabSdk();
+	console.log(lab);
 	lab.pageLoad()
 	jumpUrl.onclick = function (e) {
 		location.pathname = 'qrcode.html'
@@ -34,7 +35,7 @@
 		ev = ev || document.body;
 		var data = lab.clickElement(ev)
 		data = Object.assign(data, customData)
-		window.lab.trigger(data)
+		lab.trigger(data)
 	}
 	function sendMonitorLoadInfo(customData) {
 		// 此方法为页面加载事件方法
@@ -42,7 +43,7 @@
 		if (ev) {
 			var data = lab.pageLoad()
 			data = Object.assign(data, customData)
-			window.lab.trigger(data)
+			lab.trigger(data)
 		}
 	}
 
