@@ -3,21 +3,21 @@ try {
   centaLabSdk = class CentaLabSdk {
     constructor(data) {
       this.baseUrlObj = {
-        test: 'http://trace.centanet.com/api/star/createstar',
-        prod: 'http//trace.centanet.com/api/star/createstar'
-      }
+        test: 'https://trace.centanet.com/api/star/createstar',
+        prod: 'https://trace.centanet.com/api/star/createstar'
+      };
       this.sendData = {
-        centaId: this.getLocalStorage('monitorCentaId')||{},
+        centaId: this.getLocalStorage('monitorCentaId',true)||{},
         source: {},
         tags: {},
       };
-      this.config = this.getLocalStorage('monitorConfig',true) ? Object.assign(this.getLocalStorage('monitorConfig'), {
-        from: '001-小程序',
+      this.config = this.getLocalStorage('monitorConfig',true) ? Object.assign({
+        from: '002-资讯',
         isMonitor: true,
         isLog: true,
         isDev: true,
-      }) : {
-          from: '001-小程序',
+      },this.getLocalStorage('monitorConfig',true)) : {
+          from: '002-资讯',
           isMonitor: true,
           isLog: true,
           isDev: true,
@@ -132,10 +132,6 @@ try {
 	}
 	//页面加载埋点
 	pageLoad() {
-		this.sendData.uploadType = 'CUSTOMER_PV';
-		this.sendData.loadType = 'load';
-		this.sendData.loadTime = "0";
-		this.sendData.title = document.title;
 		this.devicesInfo = this.getDevice();
 		this.setCommonProperty();
 		return this.sendData;
@@ -374,26 +370,32 @@ try {
     };
     // 设置日志对象类的通用属性
     setCommonProperty() {
-      this.sendData.happenTime = this.dateFormat(new Date(), 'yyyy-MM-dd hh:mm:ss'); // 日志发生时间
-      this.sendData.webMonitorId = localStorage.getItem('monitorProjectId') || 'c84630e6-e878-4e6f-9812-bba9db5c2ab2';     // 用于区分应用的唯一标识（一个项目对应一个）SCRM
+      this.sendData.happenTime = new Date().getTime(); // 日志发生时间
+      // this.sendData.webMonitorId = localStorage.getItem('monitorProjectId') || 'c84630e6-e878-4e6f-9812-bba9db5c2ab2';     // 用于区分应用的唯一标识（一个项目对应一个）SCRM
       //this.uri = window.location.href.split('?')[0].replace('#', ''); // 页面的url
-      this.sendData.uri = window.location.pathname[0] == "/" ? window.location.pathname.slice(1) : window.location.pathname;
-      this.sendData.completeUrl = window.location.href; // 页面的完整url
-      this.sendData.customerKey = this.getCustomerKey(); // 用于区分用户，所对应唯一的标识，清理本地数据后失效，
+      
+      this.sendData.centaId.sessionId = this.getCustomerKey(); // 用于区分用户，所对应唯一的标识，清理本地数据后失效，
       // 用户自定义信息， 由开发者主动传入， 便于对线上问题进行准确定位
       // sendData.userId = WEB_USER_ID;
       // sendData.deptId = WEB_DEPT_ID;
-      this.sendData.os = this.devicesInfo.os + (this.devicesInfo.osVersion ? " " + this.devicesInfo.osVersion : ""),
-      this.sendData.devicesInfo = JSON.stringify({
+      this.sendData.centaId.devices = JSON.stringify({
           deviceName: this.devicesInfo.deviceName,
-          browserName: this.devicesInfo.browserName,
-          browserVersion: this.devicesInfo.browserVersion
+          browserName: this.devicesInfo.os,
+          browserVersion: this.devicesInfo.osVersion
         });
+        this.sendData.source = {
+          from: this.config.from,
+          location: window.location.pathname[0] == "/" ? window.location.pathname.slice(1) : window.location.pathname,
+          sourceObject:{
+            completeUrl:window.location.href,
+            title:document.title,
+          }
+        }
     }
 
     //合并对象 
     isMergeableObject(val) {
-      var nonNullObject = val && typeof val === 'object'
+      var nonNullObject = val && typeof val === 'object';
 
       return nonNullObject
         && Object.prototype.toString.call(val) !== '[object RegExp]'
@@ -405,7 +407,7 @@ try {
     }
 
     cloneIfNecessary(value, optionsArgument) {
-      var clone = optionsArgument && optionsArgument.clone === true
+      var clone = optionsArgument && optionsArgument.clone === true;
       return (clone && this.isMergeableObject(value)) ? this.deepmerge(this.emptyTarget(value), value, optionsArgument) : value
     }
 
@@ -418,9 +420,9 @@ try {
         } else if (_this.isMergeableObject(e)) {
           destination[i] = _this.deepmerge(target[i], e, optionsArgument)
         } else if (target.indexOf(e) === -1) {
-          destination.push(_this.cloneIfNecessary(e, optionsArgument))
+          destination.push(_this.cloneIfNecessary(e, optionsArgument));
         }
-      })
+      });
       return destination
     }
 
@@ -438,19 +440,19 @@ try {
         } else {
           destination[key] = _this.deepmerge(target[key], source[key], optionsArgument)
         }
-      })
+      });
       return destination
     }
 
     deepmerge(target, source, optionsArgument) {
       var array = Array.isArray(source);
-      var options = optionsArgument || { arrayMerge: this.defaultArrayMerge }
-      var arrayMerge = options.arrayMerge || this.defaultArrayMerge
+      var options = optionsArgument || { arrayMerge: this.defaultArrayMerge };
+      var arrayMerge = options.arrayMerge || this.defaultArrayMerge;
 
       if (array) {
         return Array.isArray(target) ? arrayMerge(target, source, optionsArgument) : this.cloneIfNecessary(source, optionsArgument)
       } else {
-        return this.mergeObject(target, source, optionsArgument)
+        return this.mergeObject(target, source, optionsArgument);
       }
     }
     //存储centaId相关信息
@@ -467,7 +469,7 @@ try {
       if (!this.config.isMonitor) {
         return
       }
-      data = data || {}
+      data = data || {};
       this.setCommonProperty();
       data = this.deepmerge(this.sendData, data);
       // var formData = new FormData();
@@ -493,7 +495,7 @@ try {
           "CityCode": data.cityCode,
           "DiamondJson": JSON.stringify([data]),
           "AppName": data.source.from
-        }))
+        }));
       }
 
     }
@@ -516,7 +518,7 @@ try {
         localStorage.setItem('monitorStytemTimestemp', Date.now());
       })
     }
-  }
+  };
   let lab = new centaLabSdk();
   lab.setTimestemp();
 } catch (error) {
