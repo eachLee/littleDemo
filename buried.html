@@ -7,9 +7,10 @@
 	<meta name="viewport"
 		content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no,viewport-fit=cover" />
 	<title>获取埋点</title>
+	<script src="js/tools.js"></script>
 	<!-- <script src="js/centalab-sdk-copy.js"></script> -->
-	<script src="js/monitor.readinfo.min.js"></script>
-	<!-- <script src="https://imonitor.centaline.com.cn/sdk/centalab-sdk.js"></script> -->
+	<!-- <script src="js/monitor.readinfo.min.js"></script> -->
+	<script src="https://imonitor.centaline.com.cn/sdk/centalab-sdk.js"></script>
 </head>
 
 <body>
@@ -17,7 +18,7 @@
 	<button id="copyText">点击我复制内容</button>
 </body>
 <script>
-	var customData = {
+	var pageBuriedData = {
 		obj: '123143',
 		send: '123124'
 	}
@@ -59,6 +60,13 @@
 			}
 		})
 	}
+	async function checkAwait(){
+		await tools.sleep(5000).then(res=>{
+			console.log('is then');
+		})
+		console.log(tools);
+	}
+	checkAwait()
 
 </script>
 

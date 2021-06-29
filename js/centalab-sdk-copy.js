@@ -7,193 +7,191 @@ try {
         prod: 'https://trace.centanet.com/api/star/createstar'
       };
       this.sendData = {
-        centaId: this.getLocalStorage('monitorCentaId',true)||{},
+        centaId: this.getLocalStorage('monitorCentaId', true) || {},
         source: {},
-        tags: {},
       };
-      this.config = this.getLocalStorage('monitorConfig',true) ? Object.assign({
+      this.config = this.getLocalStorage('monitorConfig', true) ? Object.assign({
         from: '002-资讯',
         isMonitor: true,
         isLog: true,
         isDev: true,
-      },this.getLocalStorage('monitorConfig',true)) : {
-          from: '002-资讯',
-          isMonitor: true,
-          isLog: true,
-          isDev: true,
-        };
+      }, this.getLocalStorage('monitorConfig', true)) : {
+        from: '002-资讯',
+        isMonitor: true,
+        isLog: true,
+        isDev: true,
+      };
       this.tempData;
       this.devicesInfo = this.getDevice();
       if (data && typeof data === 'object') {
         this.sendData = Object.assign({
           centaId: {},
           source: {},
-          tags: {},
         }, data)
       };
       this.baseUrl = this.config.isDev ? this.baseUrlObj.test : this.baseUrlObj.prod;
 
     }
     //获取localStorage
-    getLocalStorage(name,isObject){
-      if(name){
+    getLocalStorage(name, isObject) {
+      if (name) {
         let data = localStorage.getItem(name);
-        if(isObject){
-          if(data){
+        if (isObject) {
+          if (data) {
             return JSON.parse(data);
           }
-        }else{
+        } else {
           return data;
         }
-      }else{
+      } else {
         return '';
       }
     }
     //设置localStorage
-    setLocalStorage(name,data){
-      if(name&&data){
-        if(typeof data === 'object'){
-          localStorage.setItem(name,JSON.stringify(data));
-        }else{
-          localStorage.setItem(name,data);
+    setLocalStorage(name, data) {
+      if (name && data) {
+        if (typeof data === 'object') {
+          localStorage.setItem(name, JSON.stringify(data));
+        } else {
+          localStorage.setItem(name, data);
         }
       }
     }
     //初始化配置
     init(config) {
-      if (this.getLocalStorage('monitorConfig',true)) {
-        this.setLocalStorage('monitorConfig', Object.assign(this.getLocalStorage('monitorConfig',true), config));
+      if (this.getLocalStorage('monitorConfig', true)) {
+        this.setLocalStorage('monitorConfig', Object.assign(this.getLocalStorage('monitorConfig', true), config));
       } else {
         this.setLocalStorage('monitorConfig', config);
       }
 
-      this.config = this.getLocalStorage('monitorConfig',true)||{};
+      this.config = this.getLocalStorage('monitorConfig', true) || {};
 
       if (!this.config.isDev) {
         this.baseUrl = this.baseUrlObj.prod;
       } else {
         this.baseUrl = this.baseUrlObj.test;
       }
-      this.config.isLog && console.log('monitorConfig is: ', this.getLocalStorage('monitorConfig',true));
+      this.config.isLog && console.log('monitorConfig is: ', this.getLocalStorage('monitorConfig', true));
     }
-    
-			// 根据元素读取xPath
-	readXPath(element) {
-		if (element.id !== "") {//判断id属性，如果这个元素有id，则显 示//*[@id="xPath"]  形式内容
-			return '//*[@id="' + element.id + '"]';
-		}
-		//这里需要需要主要字符串转译问题，可参考js 动态生成html时字符串和变量转译（注意引号的作用）
-		if (element == document.body) {//递归到body处，结束递归
-			return '/html/' + element.tagName.toLowerCase();
-		}
-		var ix = 1,//在nodelist中的位置，且每次点击初始化
-			siblings = element.parentNode != null ? element.parentNode.childNodes : element;//同级的子元素
-		for (var i = 0, l = siblings.length; i < l; i++) {
-			var sibling = siblings[i];
-			var slis = sibling.parentNode.children;
-			var k = 0;
-			//如果同类标签有多个时则显示下标
-			for (var j = 0; j < slis.length; j++) {
-				if (slis[j].nodeName == sibling.nodeName) {
-					k++;
-				}
-			}
-			if (k == 1) {
-				return this.readXPath(element.parentNode) + '/' + element.tagName.toLowerCase();
-			}
-			//如果这个元素是siblings数组中的元素，则执行递归操作
-			if (sibling == element) {
-				return this.readXPath(element.parentNode) + '/' + element.tagName.toLowerCase() + '[' + (ix) + ']';
-				//如果不符合，判断是否是element元素，并且是否是相同元素，如果是相同的就开始累加
-			} else if (sibling.nodeType == 1 && sibling.tagName == element.tagName) {
-				ix++;
-			}
-		}
-	}
 
-		//获取属性列表
-	getAttrList(element) {
-		var arr = [],
-			attrName,
-			attrValue,
-			i,
-			len,
-			attrs = element.attributes;
+    // 根据元素读取xPath
+    readXPath(element) {
+      if (element.id !== "") {//判断id属性，如果这个元素有id，则显 示//*[@id="xPath"]  形式内容
+        return '//*[@id="' + element.id + '"]';
+      }
+      //这里需要需要主要字符串转译问题，可参考js 动态生成html时字符串和变量转译（注意引号的作用）
+      if (element == document.body) {//递归到body处，结束递归
+        return '/html/' + element.tagName.toLowerCase();
+      }
+      var ix = 1,//在nodelist中的位置，且每次点击初始化
+        siblings = element.parentNode != null ? element.parentNode.childNodes : element;//同级的子元素
+      for (var i = 0, l = siblings.length; i < l; i++) {
+        var sibling = siblings[i];
+        var slis = sibling.parentNode.children;
+        var k = 0;
+        //如果同类标签有多个时则显示下标
+        for (var j = 0; j < slis.length; j++) {
+          if (slis[j].nodeName == sibling.nodeName) {
+            k++;
+          }
+        }
+        if (k == 1) {
+          return this.readXPath(element.parentNode) + '/' + element.tagName.toLowerCase();
+        }
+        //如果这个元素是siblings数组中的元素，则执行递归操作
+        if (sibling == element) {
+          return this.readXPath(element.parentNode) + '/' + element.tagName.toLowerCase() + '[' + (ix) + ']';
+          //如果不符合，判断是否是element元素，并且是否是相同元素，如果是相同的就开始累加
+        } else if (sibling.nodeType == 1 && sibling.tagName == element.tagName) {
+          ix++;
+        }
+      }
+    }
 
-		for (i = 0, len = attrs.length; i < len; i++) {
-			attrName = attrs[i]['nodeName'];
-			attrValue = attrs[i]['nodeValue'];
-			if (attrs[i]['specified'] && attrs[i].name.toLowerCase().indexOf("monitor-") != -1) {
-				arr.push(attrName + "=\"" + attrValue + "\"");
-			}
-		}
+    //获取属性列表
+    getAttrList(element) {
+      var arr = [],
+        attrName,
+        attrValue,
+        i,
+        len,
+        attrs = element.attributes;
 
-		return arr.join(' ');
-	}
-	//页面加载埋点
-	pageLoad() {
-		this.devicesInfo = this.getDevice();
-		this.setCommonProperty();
-		return this.sendData;
-	}
-	clickElement(e) {
-		//处理事件对象不存在的情况
-		if (!e.target) {
-			if (e.$el) {
-				e.target = e.$el
-			} else {
-				e.target = document.body
-			}
-		}
-		//密码框不上传
-		if (e.target.nodeName.toLowerCase() !== 'svg' && e.target.nodeName.toLowerCase() !== 'use') {
-			if ((e.target.type && e.target.type == 'password') ||
-				(e.target.className && e.target.className.indexOf('unmonitor') > -1)) {
-				return;
-			}
-		}
-		var className = "";
-		var placeholder = "";
-		var inputValue = "";
-		var tagName = e.target.tagName;
-		var tagType = e.target.type || '';
-		var innerText = "";
-		var sourceId = "";
-		var xpath = "";
-		var attributeName = "";
-		if (e.target.tagName.toLowerCase() != "svg" && e.target.tagName.toLowerCase() != "use") {
-			xpath = this.readXPath(e.target);
-			className = (typeof e.target.className === 'object') ? e.target.className.baseVal : e.target.className;
-			sourceId = e.target.id;
-			placeholder = e.target.placeholder || "";
-			inputValue = e.target.value || "";
-			innerText = e.target.innerText ? e.target.innerText.replace(/\s*/g, "") : "";
-			// 如果点击的内容过长，就截取上传
-			if (innerText.length > 200) innerText = innerText.substring(0, 100) + "... ..." + innerText.substring(innerText.length - 99, innerText.length - 1);
-			innerText = innerText.replace(/\s/g, '').replace(/\\/g, "/").replace(/\"/g, '');
-			if (inputValue.length > 200) inputValue = inputValue.substring(0, 100) + "... ..." + inputValue.substring(inputValue.length - 99, inputValue.length - 1);
-			inputValue = inputValue.replace(/\s/g, '').replace(/\\/g, "/").replace(/\"/g, '');
-			attributeName = this.getAttrList(e.target);
-			if (attributeName.length > 50) attributeName = attributeName.substring(0, 50)
-		}
-		// if ((innerText == '' && inputValue == '') || innerText.length > 10) {
-		//    return;
-		// }
-		this.sendData.uploadType = 'ELE_BEHAVIOR';
-		this.sendData.behaviorType = 'click';
-		this.sendData.sourceId = sourceId;
-		this.sendData.className = (className);
-		this.sendData.placeholder = (placeholder);
-		this.sendData.inputValue = (inputValue);
-		this.sendData.tagName = tagName;
-		this.sendData.tagType = tagType;
-		this.sendData.innerText = innerText;
-		this.sendData.xpath = xpath;
-		this.sendData.attributeName = attributeName;
-		this.devicesInfo = this.getDevice();
-		this.setCommonProperty();
-		return this.sendData;
-	}
+      for (i = 0, len = attrs.length; i < len; i++) {
+        attrName = attrs[i]['nodeName'];
+        attrValue = attrs[i]['nodeValue'];
+        if (attrs[i]['specified'] && attrs[i].name.toLowerCase().indexOf("monitor-") != -1) {
+          arr.push(attrName + "=\"" + attrValue + "\"");
+        }
+      }
+
+      return arr.join(' ');
+    }
+    //页面加载埋点
+    pageLoad() {
+      this.devicesInfo = this.getDevice();
+      this.setCommonProperty();
+      return this.sendData;
+    }
+    clickElement(e) {
+      //处理事件对象不存在的情况
+      if (!e.target) {
+        if (e.$el) {
+          e.target = e.$el
+        } else {
+          e.target = document.body
+        }
+      }
+      //密码框不上传
+      if (e.target.nodeName.toLowerCase() !== 'svg' && e.target.nodeName.toLowerCase() !== 'use') {
+        if ((e.target.type && e.target.type == 'password') ||
+          (e.target.className && e.target.className.indexOf('unmonitor') > -1)) {
+          return;
+        }
+      }
+      var className = "";
+      var placeholder = "";
+      var inputValue = "";
+      var tagName = e.target.tagName;
+      var tagType = e.target.type || '';
+      var innerText = "";
+      var sourceId = "";
+      var xpath = "";
+      var attributeName = "";
+      if (e.target.tagName.toLowerCase() != "svg" && e.target.tagName.toLowerCase() != "use") {
+        xpath = this.readXPath(e.target);
+        className = (typeof e.target.className === 'object') ? e.target.className.baseVal : e.target.className;
+        sourceId = e.target.id;
+        placeholder = e.target.placeholder || "";
+        inputValue = e.target.value || "";
+        innerText = e.target.innerText ? e.target.innerText.replace(/\s*/g, "") : "";
+        // 如果点击的内容过长，就截取上传
+        if (innerText.length > 200) innerText = innerText.substring(0, 100) + "... ..." + innerText.substring(innerText.length - 99, innerText.length - 1);
+        innerText = innerText.replace(/\s/g, '').replace(/\\/g, "/").replace(/\"/g, '');
+        if (inputValue.length > 200) inputValue = inputValue.substring(0, 100) + "... ..." + inputValue.substring(inputValue.length - 99, inputValue.length - 1);
+        inputValue = inputValue.replace(/\s/g, '').replace(/\\/g, "/").replace(/\"/g, '');
+        attributeName = this.getAttrList(e.target);
+        if (attributeName.length > 50) attributeName = attributeName.substring(0, 50)
+      }
+      // if ((innerText == '' && inputValue == '') || innerText.length > 10) {
+      //    return;
+      // }
+      this.sendData.uploadType = 'ELE_BEHAVIOR';
+      this.sendData.behaviorType = 'click';
+      this.sendData.sourceId = sourceId;
+      this.sendData.className = (className);
+      this.sendData.placeholder = (placeholder);
+      this.sendData.inputValue = (inputValue);
+      this.sendData.tagName = tagName;
+      this.sendData.tagType = tagType;
+      this.sendData.innerText = innerText;
+      this.sendData.xpath = xpath;
+      this.sendData.attributeName = attributeName;
+      this.devicesInfo = this.getDevice();
+      this.setCommonProperty();
+      return this.sendData;
+    }
     //获取设备信息
     getDevice() {
       var device = {};
@@ -357,7 +355,7 @@ try {
       }) + "-" + timeStamp;
     };
 
-    
+
     getCustomerKey() {
       var customerKey = this.getUuid();
       var reg = /^[0-9a-z]{8}(-[0-9a-z]{4}){3}-[0-9a-z]{12}-\d{13}$/;
@@ -373,24 +371,25 @@ try {
       this.sendData.happenTime = new Date().getTime(); // 日志发生时间
       // this.sendData.webMonitorId = localStorage.getItem('monitorProjectId') || 'c84630e6-e878-4e6f-9812-bba9db5c2ab2';     // 用于区分应用的唯一标识（一个项目对应一个）SCRM
       //this.uri = window.location.href.split('?')[0].replace('#', ''); // 页面的url
-      
+
       this.sendData.centaId.sessionId = this.getCustomerKey(); // 用于区分用户，所对应唯一的标识，清理本地数据后失效，
       // 用户自定义信息， 由开发者主动传入， 便于对线上问题进行准确定位
       // sendData.userId = WEB_USER_ID;
       // sendData.deptId = WEB_DEPT_ID;
-      this.sendData.centaId.devices = JSON.stringify({
-          deviceName: this.devicesInfo.deviceName,
-          browserName: this.devicesInfo.os,
-          browserVersion: this.devicesInfo.osVersion
-        });
-        this.sendData.source = {
-          from: this.config.from,
-          location: window.location.pathname[0] == "/" ? window.location.pathname.slice(1) : window.location.pathname,
-          sourceObject:{
-            completeUrl:window.location.href,
-            title:document.title,
-          }
+      this.sendData.centaId.device = JSON.stringify({
+        deviceName: this.devicesInfo.deviceName,
+        browserName: this.devicesInfo.os,
+        browserVersion: this.devicesInfo.osVersion
+      });
+      this.sendData.cityCode = this.config.cityCode;
+      this.sendData.source = this.mergeObject({
+        from: this.config.from,
+        location: window.location.pathname[0] == "/" ? window.location.pathname.slice(1) : window.location.pathname,
+        sourceObject: {
+          completeUrl: window.location.href,
+          title: document.title,
         }
+      }, this.sendData.source)
     }
 
     //合并对象 
@@ -457,12 +456,12 @@ try {
     }
     //存储centaId相关信息
     customerInfo(centaIdObj) {
-      if (this.getLocalStorage('monitorCentaId',true)) {
-        this.setLocalStorage('monitorCentaId',Object.assign(this.getLocalStorage('monitorCentaId',true), centaIdObj));
+      if (this.getLocalStorage('monitorCentaId', true)) {
+        this.setLocalStorage('monitorCentaId', Object.assign(this.getLocalStorage('monitorCentaId', true), centaIdObj));
       } else {
-        this.setLocalStorage('monitorCentaId',centaIdObj);
+        this.setLocalStorage('monitorCentaId', centaIdObj);
       }
-      this.config.isLog && console.log('monitorCentaId is: ', this.getLocalStorage('monitorCentaId',true));
+      this.config.isLog && console.log('monitorCentaId is: ', this.getLocalStorage('monitorCentaId', true));
     }
     //发送请求
     trigger(data) {
@@ -479,8 +478,8 @@ try {
       if (window.fetch) {
         fetch(this.baseUrl, {
           method: 'POST',
-          headers:{
-            'content-type':'application/json'
+          headers: {
+            'content-type': 'application/json'
           },
           body: JSON.stringify({
             "CityCode": data.cityCode,
@@ -499,7 +498,7 @@ try {
       }
 
     }
-    
+
     //设置公共时间戳 用于计算页面停留时间
     setTimestemp() {
       var timeStamp = localStorage.getItem('monitorStytemTimestemp');
@@ -514,7 +513,19 @@ try {
         var stayTime = (Date.now() - timeStamp);
         _this.stayTime = stayTime;
         _this.setCommonProperty();
-        _this.trigger();
+        //合并页面埋点信息
+        _this.config.isLog && console.log('pageBuriedData is: ', JSON.stringify(this.pageBuriedData));
+        if (this.pageBuriedData) {
+          _this.sendData = _this.deepmerge(_this.sendData, this.pageBuriedData);
+          if (this.pageBuriedData.source && this.pageBuriedData.source.evenStayId) {
+            _this.sendData.source.eventId = this.pageBuriedData.source.evenStayId;
+            _this.sendData.timeLong = stayTime;
+            _this.sendData.action = 2;
+            _this.trigger(_this.sendData);
+          } else {
+            return void 0;
+          }
+        }
         localStorage.setItem('monitorStytemTimestemp', Date.now());
       })
     }
