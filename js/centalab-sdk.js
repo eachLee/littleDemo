@@ -519,7 +519,7 @@ try {
 			var _this = this;
 			//监听浏览器前进后退事件 
 			window.addEventListener('beforeunload', async function (e) {
-				var stayTime = (Date.now() - timeStamp);
+				var stayTime = (Date.now() - timeStamp) / 1000;
 				_this.stayTime = stayTime;
 				_this.setCommonProperty();
 				//合并页面埋点信息
