@@ -9,14 +9,13 @@ try {
       this.sendData = {
         centaId: wx.getStorageSync('monitorCentaId') || {},
         source: {},
-        tags: {},
       };
-      this.config = wx.getStorageSync('monitorConfig') ? Object.assign(wx.getStorageSync('monitorConfig'), {
+      this.config = wx.getStorageSync('monitorConfig') ? Object.assign({
         from: '001-小程序',
         isMonitor: true,
         isLog: true,
         isDev: true,
-      }) : {
+      }, wx.getStorageSync('monitorConfig')) : {
           from: '001-小程序',
           isMonitor: true,
           isLog: true,
@@ -28,19 +27,19 @@ try {
         this.sendData = Object.assign({
           centaId: {},
           source: {},
-          tags: {},
         }, data)
       };
       this.baseUrl = this.config.isDev ? this.baseUrlObj.test : this.baseUrlObj.prod;
-
     }
 
     //初始化配置
     init(config) {
       if (wx.getStorageSync('monitorConfig') && typeof wx.getStorageSync('monitorConfig') === 'object') {
-        wx.setStorage({ key: 'monitorConfig', data: Object.assign(wx.getStorageSync('monitorConfig'), config) });
+        if (config) {
+          wx.setStorageSync('monitorConfig', Object.assign(wx.getStorageSync('monitorConfig'), config));
+        }
       } else {
-        wx.setStorage({ key: 'monitorConfig', data: config });
+        wx.setStorageSync('monitorConfig', config);
       }
 
       this.config = wx.getStorageSync('monitorConfig');
@@ -66,16 +65,16 @@ try {
       // this.sendData.webMonitorId = wx.getStorageSync('monitorProjectId');     // 用于区分应用的唯一标识（一个项目对应一个）SCRM
       this.sendData.centaId.sessionId = this.getCustomerKey(); // 用于区分用户，所对应唯一的标识，清理本地数据后失效，
       // 用户自定义信息， 由开发者主动传入， 便于对线上问题进行准确定位
-      this.sendData.centaId.devices = JSON.stringify({
+      this.sendData.centaId.device = JSON.stringify({
         deviceName: this.devicesInfo.model,
         browserName: 'wechat',
         browserVersion: this.devicesInfo.version,
         os: this.devicesInfo.system,
       });
-      this.sendData.source = {
+      this.sendData.source = this.deepmerge(this.sendData.source, {
         location: currentPageObj.url,
         from: this.config.from,
-      }
+      })
       return this.sendData
     }
 
@@ -94,9 +93,9 @@ try {
       var reg = /^[0-9a-z]{8}(-[0-9a-z]{4}){3}-[0-9a-z]{12}-\d{13}$/;
       let monitorCustomerKey = wx.getStorageSync('monitorCustomerKey');
       if (!monitorCustomerKey) {
-        wx.setStorage({ key: 'monitorCustomerKey', data: customerKey })
+        wx.setStorageSync('monitorCustomerKey', customerKey)
       } else if (!reg.test(monitorCustomerKey)) {
-        wx.setStorage({ key: 'monitorCustomerKey', data: customerKey })
+        wx.setStorageSync('monitorCustomerKey', customerKey)
       }
       return wx.getStorageSync('monitorCustomerKey');
     };
@@ -191,23 +190,35 @@ try {
     }
     //存储userID
     setUserId(userId) {
-      wx.setStorage({ key: 'monitorUserId', data: userId })
+      wx.setStorageSync('monitorUserId', userId)
     }
     //存储user信息
     setUserInfo(userInfo) {
-      wx.setStorage({ key: 'monitorUserInfo', data: userInfo })
+      wx.setStorageSync('monitorUserInfo', userInfo)
     }
     //存储应用Id
     setAppId(appId) {
-      wx.setStorage({ key: 'monitorAppId', data: appId })
+      wx.setStorageSync('monitorAppId', appId)
     }
 
     //存储centaId相关信息
     customerInfo(centaIdObj) {
+      this.config.isLog && console.log('set monitorCentaId before is: ', wx.getStorageSync('monitorCentaId'), 'centaObj is :', centaIdObj);
       if (wx.getStorageSync('monitorCentaId') && typeof wx.getStorageSync('monitorCentaId') === 'object') {
-        wx.setStorage({ key: 'monitorCentaId', data: Object.assign(wx.getStorageSync('monitorCentaId'), centaIdObj) });
+        let monitorCentaId = wx.getStorageSync('monitorCentaId');
+        for (const key in centaIdObj) {
+          if (Object.hasOwnProperty.call(centaIdObj, key)) {
+            const element = centaIdObj[key];
+            if (element) {
+              monitorCentaId[key] = element;
+            }
+          }
+        }
+        this.sendData.centaId = this.deepmerge(this.sendData.centaId, monitorCentaId);
+        wx.setStorageSync('monitorCentaId', this.sendData.centaId);
       } else {
-        wx.setStorage({ key: 'monitorCentaId', data: centaIdObj });
+        this.sendData.centaId = this.deepmerge(this.sendData.centaId, centaIdObj);
+        wx.setStorageSync('monitorCentaId', this.sendData.centaId);
       }
       this.config.isLog && console.log('monitorCentaId is: ', wx.getStorageSync('monitorCentaId'));
     }
@@ -218,14 +229,8 @@ try {
       }
       data = data || {}
       this.setCommonProperty();
-      data = this.deepmerge(this.sendData, data)
-      if (!this.tempData) {
-        //用来暂存只需要传一次的内容 如openId等
-        this.tempData = data;
-        // wx.setStorage({ 'key': 'monitorCentaId', 'data': data });
-      } else {
-        data.test = data.test || this.tempData.test;
-      }
+
+      data = this.deepmerge(this.sendData, data);
       let url = this.baseUrl;
       this.config.isLog && console.log('sendData is: ', data);
       // url += '?behaviorData=' + encodeURIComponent('[' + JSON.stringify(data) + ']');
@@ -255,7 +260,6 @@ try {
     let originOnShowMethod = page["onShow"] || function () { };
     page["onShow"] = function (options) {
       const pageObj = lab.getCurrentPageInfo();
-      const currentPage = pageObj.currentPage;
       //开始计时
       page.start_time = new Date();
       page.can_track = true;
@@ -270,11 +274,15 @@ try {
       if (page.can_track) {
         page.can_track = false;
         const page_stay_time = (new Date() - page.start_time) / 1000;
-        let customSendData = page.pageBuriedData;
-        lab.sendData.happenTime = page.start_time.getTime();
-        lab.sendData.timeLong = page_stay_time;
-        lab.sendData.action = 2;
-        lab.trigger(customSendData);
+        let customSendData = currentPage.pageBuriedData;
+        if (customSendData && customSendData.source && customSendData.source.evenStayId) {
+          lab.init()
+          lab.sendData.happenTime = page.start_time.getTime();
+          lab.sendData.timeLong = page_stay_time;
+          lab.sendData.source.eventId = customSendData.source.evenStayId;
+          lab.sendData.action = 2;
+          lab.trigger(customSendData);
+        }
       }
       originOnUnloadMethod.call(this, options);
     };
@@ -287,11 +295,15 @@ try {
       if (page.can_track) {
         page.can_track = false;
         const page_stay_time = (new Date() - page.start_time) / 1000;
-        let customSendData = page.pageBuriedData;
-        lab.sendData.happenTime = page.start_time.getTime();
-        lab.sendData.timeLong = page_stay_time;
-        lab.sendData.action = 2;
-        lab.trigger(customSendData);
+        let customSendData = currentPage.pageBuriedData;
+        if (customSendData && customSendData.source && customSendData.source.evenStayId) {
+          lab.init()
+          lab.sendData.happenTime = page.start_time.getTime();
+          lab.sendData.timeLong = page_stay_time;
+          lab.sendData.source.eventId = customSendData.source.evenStayId;
+          lab.sendData.action = 2;
+          lab.trigger(customSendData);
+        }
       }
       originOnHideMethod.call(this, options);
     };
@@ -300,13 +312,20 @@ try {
     page["onReachBottom"] = function (options) {
       const pageObj = lab.getCurrentPageInfo();
       const currentPage = pageObj.currentPage;
-      //停止计时
+      let customSendData = currentPage.pageBuriedData;
+      if (customSendData && customSendData.source && customSendData.source.evenScrollDownId) {
+        lab.init()
+        lab.sendData.happenTime = page.start_time.getTime();
+        lab.sendData.source.eventId = customSendData.source.evenScrollDownId;
+        lab.sendData.action = 3;
+        lab.trigger(customSendData);
+      }
       originOnReachBottomMethod.call(this, options);
     };
     return originPage(page);
   };
 
 } catch (error) {
-  console.log(error);
+
 }
 export { centaLabWxSdk }

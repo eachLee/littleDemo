@@ -4,7 +4,7 @@ try {
 		constructor(data) {
 			this.baseUrlObj = {
 				test: 'https://trace.centanet.com/api/star/createstar',
-				prod: 'https://trace.centanet.com/api/star/createstar'
+				prod: 'https://trace.centanet.com/prod/api/star/createstar'
 			};
 			this.sendData = {
 				centaId: this.getLocalStorage('monitorCentaId', true) || {},
@@ -510,11 +510,11 @@ try {
 
 		//设置公共时间戳 用于计算页面停留时间
 		setTimestemp() {
-			var timeStamp = localStorage.getItem('monitorStytemTimestemp');
+			var timeStamp = sessionStorage.getItem('monitorStytemTimestemp');
 			this.pageLoad();
 			if (!timeStamp) {
 				timeStamp = Date.now();
-				localStorage.setItem('monitorStytemTimestemp', timeStamp);
+				sessionStorage.setItem('monitorStytemTimestemp', timeStamp);
 			}
 			var _this = this;
 			//监听浏览器前进后退事件 
@@ -535,7 +535,7 @@ try {
 						return void 0;
 					}
 				}
-				localStorage.setItem('monitorStytemTimestemp', Date.now());
+				sessionStorage.setItem('monitorStytemTimestemp', Date.now());
 			})
 		}
 	};

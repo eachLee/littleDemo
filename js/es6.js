@@ -1,3 +1,5 @@
+import a from './test.js';
+console.log(a);
 var arr = [1, 2, 3, 4, 5, 6, 7];
 var str = 'hello world';
 var obj = {
@@ -149,3 +151,4 @@ var obj2 = {
 };
 console.log(obj2.toString());
 
+export default obj2;
