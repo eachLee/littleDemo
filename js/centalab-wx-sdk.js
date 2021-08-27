@@ -4,7 +4,7 @@ try {
     constructor(data) {
       this.baseUrlObj = {
         test: 'https://trace.centanet.com/api/star/createstar',
-        prod: 'https://trace.centanet.com/api/star/createstar'
+        prod: 'https://trace.centanet.com/prod/api/star/createstar'
       }
       this.sendData = {
         centaId: wx.getStorageSync('monitorCentaId') || {},
@@ -277,6 +277,7 @@ try {
         let customSendData = currentPage.pageBuriedData;
         if (customSendData && customSendData.source && customSendData.source.evenStayId) {
           lab.init()
+          lab.sendData.centaId = wx.getStorageSync('monitorCentaId') || {};
           lab.sendData.happenTime = page.start_time.getTime();
           lab.sendData.timeLong = page_stay_time;
           lab.sendData.source.eventId = customSendData.source.evenStayId;
@@ -297,7 +298,8 @@ try {
         const page_stay_time = (new Date() - page.start_time) / 1000;
         let customSendData = currentPage.pageBuriedData;
         if (customSendData && customSendData.source && customSendData.source.evenStayId) {
-          lab.init()
+          lab.init();
+          lab.sendData.centaId = wx.getStorageSync('monitorCentaId') || {};
           lab.sendData.happenTime = page.start_time.getTime();
           lab.sendData.timeLong = page_stay_time;
           lab.sendData.source.eventId = customSendData.source.evenStayId;
@@ -315,6 +317,7 @@ try {
       let customSendData = currentPage.pageBuriedData;
       if (customSendData && customSendData.source && customSendData.source.evenScrollDownId) {
         lab.init()
+        lab.sendData.centaId = wx.getStorageSync('monitorCentaId') || {};
         lab.sendData.happenTime = page.start_time.getTime();
         lab.sendData.source.eventId = customSendData.source.evenScrollDownId;
         lab.sendData.action = 3;
