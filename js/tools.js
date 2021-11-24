@@ -1,5 +1,10 @@
 var ToolsObj = function () { }
 ToolsObj.prototype = {
+  //去除文本里的html标签 返回替换后的文本
+  stripHtml: function (html) {
+    return (new DOMParser().parseFromString(html, 'text/html')).body.textContent || ''
+  },
+
   // 获取指定范围的随机数 返回整数 包含min和max值
   getRandomNum: function (min, max) {
     return Math.floor(Math.random() * (max - min + 1) + min)
