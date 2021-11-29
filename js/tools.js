@@ -438,8 +438,8 @@ let ToolsObj = class ToolsObj {
     }
     return dateStr;
   }
+  //获取当前周的日期
   getCurrentWeek() {
-    //获取当前周的日期
     let weekDate = [];
     for (let i = 0; i < 7; i++) {
       if (i == (new Date().getDay() || 7) - 1) {
