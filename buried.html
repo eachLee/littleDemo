@@ -22,7 +22,7 @@
 		obj: '123143',
 		send: '123124'
 	}
-	let lab = new window.centaLabSdk();
+	let lab = new window.centaIOSdk();
 	console.log(lab);
 	lab.pageLoad();
 	lab.init({ isLog: true, isMonitor: true })
@@ -45,11 +45,9 @@
 	function sendMonitorLoadInfo(customData) {
 		// 此方法为页面加载事件方法
 		//customData为需要传递的参数 会合并到埋点要发送的对象里	
-		if (ev) {
-			var data = lab.pageLoad()
-			data = Object.assign(data, customData)
-			lab.trigger(data)
-		}
+		var data = lab.pageLoad()
+		data = Object.assign(data, customData)
+		lab.trigger(data)
 	}
 
 	copyText.onclick = function () {
@@ -60,9 +58,10 @@
 			}
 		})
 	}
-	async function checkAwait(){
-		await tools.sleep(5000).then(res=>{
+	async function checkAwait() {
+		await tools.sleep(5000).then(res => {
 			console.log('is then');
+			sendMonitorLoadInfo()
 		})
 		console.log(tools);
 	}

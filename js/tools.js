@@ -131,7 +131,7 @@ let ToolsObj = class ToolsObj {
     copyBox.remove()
   }
   //模拟实现的一个sleep函数 es6以上支持 单位为ms
-  sleep(ms) { new Promise(resolve => setTimeout(resolve, ms)) }
+  sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms)) }
   // 判断设备是否支持触屏 返回boolean值
   hasTouch() {
     let touchObj = {}
