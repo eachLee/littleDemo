@@ -217,6 +217,70 @@ let ToolsObj = class ToolsObj {
     }
     return cloneObj(obj)
   }
+  // chatgpt 优化版
+  deepClone(obj) {
+    if (!obj) return;
+
+    // 使用 Map 来存储对象的映射关系
+    const map = new Map();
+
+    function isType(obj, type) {
+      if (typeof obj !== 'object') return false;
+      switch (type) {
+        case 'array':
+          return Array.isArray(obj);
+        case 'date':
+          return obj instanceof Date;
+        case 'regexp':
+          return obj instanceof RegExp;
+        default:
+          return false;
+      }
+    }
+
+    function getRegexp(reg) {
+      if (!(reg instanceof RegExp)) return '';
+      let flags = '';
+      if (reg.global) flags += 'g';
+      if (reg.ignoreCase) flags += 'i';
+      if (reg.multiline) flags += 'm';
+      return flags;
+    }
+
+    function cloneObj(obj) {
+      if (typeof obj === 'function') return obj;
+      if (typeof obj !== 'object') return obj;
+
+      if (isType(obj, 'array')) {
+        // 对数组做特殊处理
+        return obj.map(item => cloneObj(item));
+      } else if (isType(obj, 'regexp')) {
+        // 对正则对象做特殊处理
+        return new RegExp(obj.source, getRegexp(obj));
+      } else if (isType(obj, 'date')) {
+        // 对时间对象做特殊处理
+        return new Date(obj.getTime());
+      }
+
+      // 处理对象原型
+      let proto = Object.getPrototypeOf(obj);
+      // 创建空对象作为复制对象，并存储映射关系
+      const child = Object.create(proto);
+      map.set(obj, child);
+
+      // 对对象做特殊处理
+      for (let key in obj) {
+        if (obj.hasOwnProperty(key)) {
+          // 递归调用
+          child[key] = cloneObj(obj[key]);
+        }
+      }
+      return child;
+    }
+
+    return cloneObj(obj);
+  }
+
   /**
    * 克隆对象
    * @param {Object} obj - 被判断的对象
